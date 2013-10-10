@@ -16,16 +16,28 @@ db = shelve.open("shorten.db")
 # Home Resource:
 # Only supports the GET method, returns a homepage represented as HTML
 ###
-@app.route('/home', methods=['GET'])
+@app.route('/home', methods=['POST'])
 def home():
-    """Builds a template based on a GET request, with some default
-    arguements"""
-    index_title = request.args.get("title", "i253")
-    hello_name = request.args.get("name", "Jim")
-    return flask.render_template(
-            'home.html',
-            title=index_title,
-            name=hello_name)
+	"""Converts long URLs to a unique key, stores that key, and redirects to the long URL when the key is accessed"""
+	#get the long URL (ID=long)
+	#check the database to see if the long URL has already been entered
+	# db[short] = long
+	#if not:
+	#	hash the long URL to some key (maybe not actually hash, we'll see)
+	#	db.insert(hash(long), long)
+	#display the form and fill in the short value (ID=short)
 
 
+###
+# Redirection:
+# 
+###
+@app.route('/short', methods=['GET'])
+def redirect():
+	#get the hash value from the path
+	#look up the hash in the database
+	#long = db[short]
+	#redirect to whatever long URL is associated
 
+if __name__ == "__main__":
+    app.run(port=int(environ['FLASK_PORT']))
