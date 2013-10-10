@@ -21,12 +21,16 @@ def home():
 	"""Converts long URLs to a unique key, stores that key, and redirects to the long URL when the key is accessed"""
 	#get the long URL (ID=long)
 	#check the database to see if the long URL has already been entered
-	# db[short] = long
-	#if not:
-	#	hash the long URL to some key (maybe not actually hash, we'll see)
-	#	db.insert(hash(long), long)
-	#display the form and fill in the short value (ID=short)
-
+	try:
+		temp = db[hash(longURL)]
+		break
+	except KeyError:
+		#hash the long URL to some key (maybe not actually hash, we'll see)
+		db[hash(longURL)] = longURL
+		#display the form and fill in the short value (ID=short)
+		return hash(longURL)
+	#return the value already in the DB
+	return db[hash(longURL)]
 
 ###
 # Redirection:
