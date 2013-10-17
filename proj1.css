@@ -4,10 +4,11 @@ font: Helvetica;
 color: green;
 }
 
-p.intro{
+body {
 color: #f1f7f6;
 text-align: left;
 font: Calibri;
+
 font-size: 30px;
 }
 
@@ -18,10 +19,7 @@ font: Arial;
 text-align: left;
 }
 
-.overlay {
-background-color: rgba(255,255,255,0.5);
-opacity:0.5;
-}
+
 
 #intro-story {
 margin-top:-45px; 
