@@ -14,23 +14,37 @@ db = shelve.open("shorten.db")
 
 ###
 # Home Resource:
-# Only supports the GET method, returns a homepage represented as HTML
+# Take and store
 ###
-@app.route('/home', methods=['POST'])
+@app.route('/process', methods=['GET'])
 def home():
 	"""Converts long URLs to a unique key, stores that key, and redirects to the long URL when the key is accessed"""
-	#get the long URL (ID=long)
+	begin = "people.ischool.berkeley.edu/~mrobison/server/shorts/short/?shortURL="
+	longURL = request.args.get('longURL')
 	#check the database to see if the long URL has already been entered
-	try:
-		temp = db[hash(longURL)]
-		break
-	except KeyError:
+	#check to see if the hash(longURL) is in the database
+	dbKey = hash(longURL)
+	#if the hash(longURL) is already in database but long URLs are not the same, then increment the key until you find
+	# one that is empty or has a URL that matches the long URL	
+	while(db.has_key(dbKey)==True and db[dbKey] != longURL):
+		dbKey +=1
+	#if long URL has already been entered, display the short URL
+	if(db[dbKey]==longURL):
+		return flask.rended_template(
+			'proj1-draft.html',
+			shortURL = begin+str(dbKey)
+		)
+	else:
 		#hash the long URL to some key (maybe not actually hash, we'll see)
-		db[hash(longURL)] = longURL
-		#display the form and fill in the short value (ID=short)
-		return hash(longURL)
-	#return the value already in the DB
-	return db[hash(longURL)]
+		db[dbKey] = longURL
+		#display the form and fill in the short value
+		return flask.render_template(
+			'proj1-draft.html',
+            shortURL = begin+str(dbKey)
+		)
+	return flask.rended_template(
+		'error.html',
+		)
 
 ###
 # Redirection:
@@ -38,10 +52,10 @@ def home():
 ###
 @app.route('/short', methods=['GET'])
 def redirect():
-	#get the hash value from the path
-	#look up the hash in the database
-	#long = db[short]
+	shortURL = request.args.get('shortURL')
+	longURL = db[shortURL]
+	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
 
 if __name__ == "__main__":
-    app.run(port=int(environ['FLASK_PORT']))
+	app.run(port=int(environ['FLASK_PORT']))
