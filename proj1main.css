@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  padding: 0;
+  color: #000;
+  font-size: 18px;
+  font-family: Helvetica;
+  color: white;
+background-size: 100%;
+background-image:url('canoe-dock.jpg');
+ text-align: center;
+}
+
+
+
+.links
+{
+background-color: rgba(0,0,0,0.5);
+text-align:center;
+ color:white;
+}
+h1 {
+    color:gold;
+}
+
+.credit {
+font-size: 10px;
+font-style: italic;
+}
