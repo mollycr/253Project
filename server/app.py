@@ -20,10 +20,7 @@ def shorts():
 	longURL = processURL(longURL)
 	shortURL = str(request.form['short'])
 	db[shortURL] = longURL
-	return flask.render_template(
-		'proj1.html',
-		shortURL = begin + shortURL
-	)
+	return home(begin+shortURL)
 
 ###
 # Redirection: 
@@ -38,13 +35,20 @@ def short(shortURL):
 	#redirect to whatever long URL is associated
 
 @app.route('/')
-def home():
-	return flask.render_template('proj1.html')
+def home(newURL="default"):
+	if newURL=="default":
+		return flask.render_template('proj1.html')
+	else:
+		return flask.render_template('proj1.html', shortURL=newURL)
 
-def processURL(url):
+def processURL (url):
 	#see if it's in http://www.google.com form
-	if(url[:7]=="http://"):
-		return 
+	if url[:7]=="http://":
+		return url
+	elif url[:4]=="www.":
+		return "http://"+url
+	else:
+		return "http://www."+url
 
 if __name__ == "__main__":
 	app.run(port=int(environ['FLASK_PORT']))
