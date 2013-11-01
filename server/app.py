@@ -39,7 +39,7 @@ def home(newURL="default"):
 	if newURL=="default":
 		return flask.render_template('proj1.html')
 	else:
-		return flask.render_template('proj2.html', shortURL=newURL)
+		return flask.render_template('proj1.html', shortURL=newURL)
 
 def processURL (url):
 	#see if it's in http://www.google.com form
