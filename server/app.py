@@ -34,6 +34,17 @@ def short(shortURL):
 	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
 
+@app.route('/login', methods=['POST'])
+def login():
+	username = str(request.form.['username']
+	hashword = str(request.form.['passwordHash']
+	if("the username is not in the database"):
+		return "Incorrect username. Want to create an account?"
+	else:
+		if("the password is incorrect"):
+			return "Incorrect password."
+		"start a session"
+
 @app.route('/')
 def home(newURL="default"):
 	if newURL=="default":
