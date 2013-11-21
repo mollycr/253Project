@@ -23,7 +23,7 @@ def createAccount():
 	if Email in existingAccounts.values():
 		return render_template('create_account.html',emailError="Email account already exists")
 	else:
-		db.execute('''INSERT INTO User VALUES (userName,Email,Password)''')
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(null,userName,Email,Password))
 		#render template Account successfully created
 
 if __name__ == '__main__':
