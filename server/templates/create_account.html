@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+   <meta name="description" content="create an account">
+    <meta name="keywords" content="account">
+    <title> Project Part II </title>
+	<link rel="stylesheet" type="text/css" href="/Users/sabina/Desktop/style.css"
+  
+  </head>
+  <body>
+  
+<h1>Creat a free account</h1>
+<p>to start saving, sharing, and discovering links</p>
+<br> <br> <br> 
+
+<fieldset>
+	<label for="username">
+		<input type="text" name="username" autocomplete="on" placeholder="Username"  size="30" />
+		<span id="username-error-message">{{usernameError}}</span>
+	</label> <br> <br>
+	<label for="email">
+		<input type="text" name="email" autocomplete="on" placeholder="Email address"  size="30" />
+		<span id="email-error-message">{{emailError}}</span>
+	</label> <br><br>
+	<label for="password">
+		<input type="password" name="password" autocomplete="off" placeholder="Password"  size="30" />
+		<span class='password-reqs'>6-20 characters</span>
+		<span id="pw-error-message">{{pwError}}</span>
+	</label> <br><br>
+	<label for="password2">
+	<input type="password" name="password2" autocomplete="off" placeholder="Password again"  size="30"/>
+	<span id="pw-repeat-error-message">{{pw2Error}}</span>
+	</label> <br><br>
+<input type="hidden" name="rd" value="/" />
+
+<button type="button">Create account!</button> 
+</fieldset>
+
+
+ 
+ <br> <br><br> <br> <br>
+  </body>
+</html>
