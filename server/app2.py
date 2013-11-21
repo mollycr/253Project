@@ -11,7 +11,7 @@ db=conn.cursor()
 def root():
 	return render_template('create_account.html')
 
-@app.route('/'), methods=['POST'])
+@app.route('/', methods=['POST'])
 def createAccount():
 	#grab all existing usernames and emails from db
 	existingAccounts=dict(db.execute('''SELECT UserName,Email from User''').fetchall())
@@ -22,6 +22,9 @@ def createAccount():
 		return render_template('create_account.html', usernameError="Username is already taken")
 	if Email in existingAccounts.values():
 		return render_template('create_account.html',emailError="Email account already exists")
+	else:
+		db.execute('''INSERT INTO User VALUES (userName,Email,Password)''')
+		#render template Account successfully created
 
 if __name__ == '__main__':
     app.run()
