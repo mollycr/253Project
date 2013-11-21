@@ -1,26 +1,28 @@
 import sqlite3
-import flask 
+from flask import Flask,request
 
 # create our little application :)
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
 #connect to db
 conn=sqlite3.connect('cmap.db')
 db=conn.cursor()
-
-#create table
-db.executescript('''
-	DROP TABLE IF EXISTS Entries;
-	create table entries(
-	id integer primary key autoincrement,
-	title text not null,
-	text text not null);
-''')
-
 @app.route('/')
-def show_entries():
-	entries=db.execute('select title,text from entries')
+def root():
+	return render_template('create_account.html')
 
+@app.route('/'), methods=['POST'])
+def createAccount():
+	#grab all existing usernames and emails from db
+	existingAccounts=dict(db.execute('''SELECT UserName,Email from User''').fetchall())
+	userName = str(request.form['username'])
+	Email=str(request.form['email'])
+	Password=str(request.form['password'])
+	if userName in existingAccounts:
+		return render_template('create_account.html', usernameError="Username is already taken")
+	if Email in existingAccounts.values():
+		return render_template('create_account.html',emailError="Email account already exists")
 
 if __name__ == '__main__':
     app.run()
+  
