@@ -1,5 +1,7 @@
 import sqlite3
 from flask import Flask,request
+import os
+import hashlib
 
 # create our little application :)
 app = Flask(__name__)
@@ -23,7 +25,11 @@ def createAccount():
 	if Email in existingAccounts.values():
 		return render_template('create_account.html',emailError="Email account already exists")
 	else:
-		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(null,userName,Email,Password))
+		salt = os.urandom(40)
+		h = hashlib.sha1()
+		h.update(salt)
+		h.update(Password)
+		db.execute('''INSERT INTO User VALUES(?,?,?,?,?)''',(null,userName,Email,h.hexdigest(),salt))
 		#render template Account successfully created
 
 if __name__ == '__main__':
