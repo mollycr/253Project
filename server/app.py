@@ -7,9 +7,6 @@ from os import environ
 import sqlite3
 from flask import Flask,request
 
-app = flask.Flask(__name__)
-app.debug = True
-
 
 #We should instead use one database for all the data we're collecting. 
 db = shelve.open("shorts.db")
@@ -17,12 +14,13 @@ db = shelve.open("shorts.db")
 
 # create our little application :)
 app = Flask(__name__)
+app.debug=True
 
 @app.route('/')
 
 #render create account template
 def root():
-	return render_template('create_account.html')
+	return flask.render_template('create_account.html')
 
 
 @app.route('/', methods=['POST'])
@@ -33,28 +31,29 @@ def createAccount():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	
+'''	
 	#grab all existing usernames and emails from db and make into dictionary where keys, values == usernames, emails
-	existingAccounts=dict(db.execute('''SELECT UserName,Email from User''').fetchall())
-	
+	existingAccounts=dict(db.execute("SELECT UserName,Email from User").fetchall())
+	'''
 	#username, email, password as requests to db
 	username = str(request.form['username'])
 	email = str(request.form['email'])
 	password = str(request.form['password'])
-	
+	'''
 	#checks if username already in database, reloads page for user to try again
 	if username in existingAccounts:
-		return render_template('create_account.html', usernameError="Username is already taken")
+		return flask.render_template('create_account.html', usernameError="Username is already taken")
 	
 	
 	#checks if email already in database, reloads page for user to try again
 	if email in existingAccounts.values():
-		return render_template('create_account.html',emailError="Email account already exists")
+		return flask.render_template('create_account.html',emailError="Email account already exists")
 	
 	
 	else:
+'''
 		#insert new user's values into cmap db
-		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(null,username,email,password))
+	db.execute("INSERT INTO User VALUES(?,?,?,?)",(null,username,email,password))
 		
 		#render template account successfully created
 		#add in code to show html page once account created 
@@ -90,14 +89,14 @@ def short(shortURL):
 	longURL = db[shortURL]
 	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
-
+'''
 @app.route('/')
 def home(newURL="default"):
 	if newURL=="default":
 		return flask.render_template('proj1.html')
 	else:
 		return flask.render_template('proj1.html', shortURL=newURL)
-
+'''
 def processURL (url):
 	#see if it's in http://www.google.com form
 	if url[:7]=="http://":
