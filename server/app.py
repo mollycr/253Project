@@ -3,12 +3,69 @@
 import shelve
 from subprocess import check_output
 import flask
-from flask import request
 from os import environ
+import sqlite3
+from flask import Flask,request
 
 app = flask.Flask(__name__)
 app.debug = True
+
+
+#We should instead use one database for all the data we're collecting. 
 db = shelve.open("shorts.db")
+
+
+# create our little application :)
+app = Flask(__name__)
+
+@app.route('/')
+
+#render create account template
+def root():
+	return render_template('create_account.html')
+
+
+@app.route('/', methods=['POST'])
+
+
+def createAccount():
+	
+	#connect to cmap db
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	
+	#grab all existing usernames and emails from db and make into dictionary where keys, values == usernames, emails
+	existingAccounts=dict(db.execute('''SELECT UserName,Email from User''').fetchall())
+	
+	#username, email, password as requests to db
+	username = str(request.form['username'])
+	email = str(request.form['email'])
+	password = str(request.form['password'])
+	
+	#checks if username already in database, reloads page for user to try again
+	if username in existingAccounts:
+		return render_template('create_account.html', usernameError="Username is already taken")
+	
+	
+	#checks if email already in database, reloads page for user to try again
+	if email in existingAccounts.values():
+		return render_template('create_account.html',emailError="Email account already exists")
+	
+	
+	else:
+		#insert new user's values into cmap db
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(null,username,email,password))
+		
+		#render template account successfully created
+		#add in code to show html page once account created 
+		
+	
+	#commits and close db connection
+	conn.commit()
+	conn.close()
+
+
+
 
 ###
 # This is what the html page should send data to
@@ -52,3 +109,4 @@ def processURL (url):
 
 if __name__ == "__main__":
 	app.run(port=int(environ['FLASK_PORT']))
+	
