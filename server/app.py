@@ -7,20 +7,23 @@ from os import environ
 import sqlite3
 from flask import Flask,request
 
-
+'''
 #We should instead use one database for all the data we're collecting. 
 db = shelve.open("shorts.db")
-
+'''
 # create our little application :)
 app = Flask(__name__)
 app.debug=True
-'''
+
 @app.route('/')
 #render create account template
-def root():
-	return flask.render_template('create_account.html')
+def root(message='default'):
+	if message=='default':
+		return flask.render_template('create_account.html')
+	else:
+		return flask.render_template('create_account.html',statusMessage=message)
 
-@app.route('/', methods=['POST'])
+@app.route('/create_account', methods=['POST'])
 def createAccount():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
@@ -40,22 +43,17 @@ def createAccount():
 	if email in existingAccounts.values():
 		return flask.render_template('create_account.html',emailError="Email account already exists")
 	
-	
 	else:
 		#insert new user's values into cmap db
-	db.execute("INSERT INTO User VALUES(?,?,?,?)",(null,username,email,password))
-		
+		db.execute("INSERT INTO User VALUES(?,?,?)",(username,email,password))
 		#render template account successfully created
 		#add in code to show html page once account created 
-		
-	
 	#commits and close db connection
 	conn.commit()
 	conn.close()
+	return root("Your account is created")
+
 '''
-
-
-
 ###
 # This is what the html page should send data to
 ###
@@ -95,7 +93,7 @@ def processURL (url):
 		return "http://"+url
 	else:
 		return "http://www."+url
-
+'''
 if __name__ == "__main__":
 	app.run(port=int(environ['FLASK_PORT']))
 	
