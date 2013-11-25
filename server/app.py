@@ -36,8 +36,8 @@ def short(shortURL):
 
 @app.route('/login', methods=['POST'])
 def login():
-	username = str(request.form.['username']
-	hashword = str(request.form.['passwordHash']
+	username = str(request.form['username'])
+	hashword = str(request.form['passwordHash'])
 	if("the username is not in the database"):
 		return "Incorrect username. Want to create an account?"
 	else:
