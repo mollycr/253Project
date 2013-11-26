@@ -45,12 +45,11 @@ def createAccount():
 		#insert new user's values into cmap db
 		salt = os.urandom(40)
 		h = hashlib.sha1()
+		#put salt and password to be hashed
 		h.update(salt)
-		h.update(Password)
-		#TODO change database for user info
-		#db.execute('''INSERT INTO User VALUES(?,?,?,?,?)''',(null,userName,Email,h.hexdigest(),salt))
+		h.update(password)
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
 
-		db.execute("INSERT INTO User VALUES(?,?,?)",(username,email,password))
 		#render template account successfully created
 		#add in code to show html page once account created 
 	#commits and close db connection
