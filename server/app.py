@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
-import shelve
 from subprocess import check_output
 import flask
 from os import environ
 import sqlite3
 from flask import Flask,request
+import hashlib
 
-'''
-#We should instead use one database for all the data we're collecting. 
-db = shelve.open("shorts.db")
-'''
+
+#TODO: make a table in the database for this
+#db = shelve.open("shorts.db")
+
+
 # create our little application :)
 app = Flask(__name__)
 app.debug=True
@@ -37,14 +38,18 @@ def createAccount():
 	#checks if username already in database, reloads page for user to try again
 	if username in existingAccounts:
 		return flask.render_template('create_account.html', usernameError="Username is already taken")
-	
-	
 	#checks if email already in database, reloads page for user to try again
 	if email in existingAccounts.values():
 		return flask.render_template('create_account.html',emailError="Email account already exists")
-	
 	else:
 		#insert new user's values into cmap db
+		salt = os.urandom(40)
+		h = hashlib.sha1()
+		h.update(salt)
+		h.update(Password)
+		#TODO change database for user info
+		#db.execute('''INSERT INTO User VALUES(?,?,?,?,?)''',(null,userName,Email,h.hexdigest(),salt))
+
 		db.execute("INSERT INTO User VALUES(?,?,?)",(username,email,password))
 		#render template account successfully created
 		#add in code to show html page once account created 
@@ -52,6 +57,19 @@ def createAccount():
 	conn.commit()
 	conn.close()
 	return root("Your account is created")
+
+@app.route('/login', methods=['POST'])
+def login():
+	#TODO
+	username = str(request.form['username'])
+	hashword = str(request.form['passwordHash'])
+	if("the username is not in the database"):
+		return "Incorrect username. Want to create an account?"
+	else:
+		if("the password is incorrect"):
+			return "Incorrect password."
+		"start a session"
+
 
 '''
 ###
