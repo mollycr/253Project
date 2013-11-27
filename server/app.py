@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 
-import shelve
 from subprocess import check_output
 import flask
 from os import environ
+import os
 import sqlite3
 from flask import Flask,request
+import hashlib
 
-'''
-#We should instead use one database for all the data we're collecting. 
-db = shelve.open("shorts.db")
-'''
+
+#TODO: make a table in the database for this
+#db = shelve.open("shorts.db")
+
+
 # create our little application :)
 app = Flask(__name__)
 app.debug=True
@@ -37,21 +39,37 @@ def createAccount():
 	#checks if username already in database, reloads page for user to try again
 	if username in existingAccounts:
 		return flask.render_template('create_account.html', usernameError="Username is already taken")
-	
-	
 	#checks if email already in database, reloads page for user to try again
 	if email in existingAccounts.values():
 		return flask.render_template('create_account.html',emailError="Email account already exists")
-	
 	else:
 		#insert new user's values into cmap db
-		db.execute("INSERT INTO User VALUES(?,?,?)",(username,email,password))
+		salt = os.urandom(40)
+		h = hashlib.sha1()
+		#put salt and password to be hashed
+		h.update(salt)
+		h.update(password)
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,str(h.hexdigest())))
+
 		#render template account successfully created
 		#add in code to show html page once account created 
 	#commits and close db connection
 	conn.commit()
 	conn.close()
 	return root("Your account is created")
+
+@app.route('/login', methods=['POST'])
+def login():
+	#TODO
+	username = str(request.form['username'])
+	hashword = str(request.form['passwordHash'])
+	if("the username is not in the database"):
+		return "Incorrect username. Want to create an account?"
+	else:
+		if("the password is incorrect"):
+			return "Incorrect password."
+		"start a session"
+
 
 '''
 ###
@@ -77,6 +95,17 @@ def short(shortURL):
 	longURL = db[shortURL]
 	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
+
+@app.route('/login', methods=['POST'])
+def login():
+	username = str(request.form['username'])
+	hashword = str(request.form['passwordHash'])
+	if("the username is not in the database"):
+		return "Incorrect username. Want to create an account?"
+	else:
+		if("the password is incorrect"):
+			return "Incorrect password."
+		"start a session"
 
 @app.route('/')
 def home(newURL="default"):
