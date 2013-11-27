@@ -3,6 +3,7 @@
 from subprocess import check_output
 import flask
 from os import environ
+import os
 import sqlite3
 from flask import Flask,request
 import hashlib
@@ -48,7 +49,7 @@ def createAccount():
 		#put salt and password to be hashed
 		h.update(salt)
 		h.update(password)
-		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,str(h.hexdigest())))
 
 		#render template account successfully created
 		#add in code to show html page once account created 
