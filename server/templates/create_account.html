@@ -6,11 +6,32 @@
    <meta name="description" content="create an account">
     <meta name="keywords" content="account">
     <title> Project Part II </title>
-	<link rel="stylesheet" type="text/css" href="/Users/sabina/Desktop/style.css"
+	<link rel="stylesheet" type="text/css" href="/Users/sabina/Desktop/style.css"/>
   
+  <script type="text/javascript">
+
+function validaeForm()   
+{   
+var passw= document.forms["myForm"]["password"].value;  
+if(passw==/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]))   
+{   
+alert('Correct')  
+return true;  
+}  
+else  
+{   
+alert('Wrong!')  
+return false;  
+}  
+}
+
+</script>
   </head>
-  <body>
-  
+<body>
+
+
+<form name="myForm" action="demo_form.asp" onsubmit="return validateForm()" method="post">
+
 <h1>Creat a free account</h1>
 <p>to start saving, sharing, and discovering links</p>
 <br> <br> <br> 
@@ -35,11 +56,12 @@
 	</label> <br><br>
 <input type="hidden" name="rd" value="/" />
 
-<button type="button">Create account!</button> 
+<input type="submit" value="Create account!"> 
 </fieldset>
 
 
- 
- <br> <br><br> <br> <br>
+</form>
+
   </body>
+  
 </html>
