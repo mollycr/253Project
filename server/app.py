@@ -72,10 +72,12 @@ def createAccount():
 def login():
 	#TODO
 	username = str(request.form['username'])
-	hashword = str(request.form['passwordHash'])
+	password = str(request.form['password'])
+	db.execute('''''')
 	if("the username is not in the database"):
 		return "Incorrect username. Want to create an account?"
 	else:
+		
 		if("the password is incorrect"):
 			return "Incorrect password."
 		"start a session"
