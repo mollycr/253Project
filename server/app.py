@@ -5,7 +5,7 @@ import flask
 from os import environ
 import os
 import sqlite3
-from flask import Flask,request
+from flask import Flask,request, session
 import hashlib
 
 
@@ -23,7 +23,10 @@ def root(message='default'):
 	if message=='default':
 		return flask.render_template('create_account.html')
 	else:
-		return flask.render_template('create_account.html',statusMessage=message)
+		if 'username' in session:
+			return flask.render_template('create_account.html',statusMessage='Logged in as %s' % escape(session['username']))
+		else:
+			return flask.render_template('create_account.html',statusMessage=message)
 
 @app.route('/create_account', methods=['POST'])
 def createAccount():
@@ -56,27 +59,32 @@ def createAccount():
 	#commits and close db connection
 	conn.commit()
 	conn.close()
-	return root("Your account is created")
+	session['username']=username
+	return root("Your account is created and you are logged in")
 
 @app.route('/login', methods=['POST'])
 def login():
-	#TODO
 	username = str(request.form['username'])
 	password = str(request.form['password'])
-	existingAccounts=dict(db.execute("SELECT UserName,Email from User").fetchall())
+	existingAccounts=dict(db.execute("SELECT UserName from User").fetchall())
 	if(username not in existingAccounts):
 		return root("Incorrect username. Want to create an account?")
-	else:
-		salt = str(db.execute("SELECT salt FROM User WHERE username=?",(username)).fetchone())
-		dbHash = str(db.execute("SELECT hash FROM User WHERE username=?",(username)).fetchone())
-		h = hashlib.sha1()
-		h.update(salt)
-		h.update(password)
-		myHash = str(h.hexdigest())
-		if(myHash != dbHash):
-			return root("Incorrect password.")
-		"start a session"
-
+	salt = str(db.execute("SELECT salt FROM User WHERE UserName=?",(username)).fetchone())
+	dbHash = str(db.execute("SELECT hash FROM User WHERE UserName=?",(username)).fetchone())
+	h = hashlib.sha1()
+	h.update(salt)
+	h.update(password)
+	myHash = str(h.hexdigest())
+	if(myHash != dbHash):
+		return root("Incorrect password.")
+	#start a session
+	session['username']= username
+	return redirect("http://people.ischool.berkeley.edu/~"+os.environ['USER']+"/server/")
+	
+@app.route('/logout')
+def logout():
+	session.pop('username', None)
+	return redirect("http://people.ischool.berkeley.edu/~"+os.environ['USER']+"/server/")
 
 '''
 ###
@@ -130,6 +138,8 @@ def processURL (url):
 	else:
 		return "http://www."+url
 '''
+
+app.secret_key = 'x1dc9rxe5^&cH#a0c6x10:90bd00f4edx92Wd6d2f3f'
+
 if __name__ == "__main__":
-	app.run(port=int(environ['FLASK_PORT']))
-	
+	app.run(port=int(environ['FLASK_PORT']))	
