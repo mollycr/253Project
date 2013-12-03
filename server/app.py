@@ -5,6 +5,8 @@ import flask
 from os import environ
 import os
 import sqlite3
+import random
+import string
 from flask import Flask,request, session
 import hashlib
 
@@ -47,7 +49,7 @@ def createAccount():
 		return flask.render_template('create_account.html',emailError="Email account already exists")
 	else:
 		#insert new user's values into cmap db
-		salt = os.urandom(40)
+		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
 		h = hashlib.sha1()
 		#put salt and password to be hashed
 		h.update(salt)
