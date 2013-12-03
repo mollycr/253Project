@@ -62,12 +62,19 @@ def createAccount():
 def login():
 	#TODO
 	username = str(request.form['username'])
-	hashword = str(request.form['passwordHash'])
-	if("the username is not in the database"):
-		return "Incorrect username. Want to create an account?"
+	password = str(request.form['password'])
+	existingAccounts=dict(db.execute("SELECT UserName,Email from User").fetchall())
+	if(username not in existingAccounts):
+		return root("Incorrect username. Want to create an account?")
 	else:
-		if("the password is incorrect"):
-			return "Incorrect password."
+		salt = str(db.execute("SELECT salt FROM User WHERE username=?",(username)).fetchone())
+		dbHash = str(db.execute("SELECT hash FROM User WHERE username=?",(username)).fetchone())
+		h = hashlib.sha1()
+		h.update(salt)
+		h.update(password)
+		myHash = str(h.hexdigest())
+		if(myHash != dbHash):
+			return root("Incorrect password.")
 		"start a session"
 
 
