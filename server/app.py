@@ -7,7 +7,7 @@ import os
 import sqlite3
 import random
 import string
-from flask import Flask,request, session
+from flask import Flask,request, session, escape
 import hashlib
 
 
