@@ -17,6 +17,7 @@ import hashlib
 app = Flask(__name__)
 app.debug=True
 
+#reroutes home page to index page
 @app.route('/')
 def sendToIndex():
 	user=environ['USER']
