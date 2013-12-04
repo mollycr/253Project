@@ -17,16 +17,17 @@ import hashlib
 app = Flask(__name__)
 app.debug=True
 
+user=environ['USER']
+
 #reroutes home page to index page
 @app.route('/')
 def sendToIndex():
-	user=environ['USER']
 	url='http://people.ischool.berkeley.edu/~'+user+'/server/index'
 	return flask.redirect(url)
 
 @app.route('/index')
 def index():
-	return flask.render_template('create_account.html')
+	return flask.render_template('home.html',USER=user)
 
 @app.route('/create_account',methods=['GET'])
 #renders create account page before and after create account form is posted
