@@ -47,7 +47,6 @@ def createAccount():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	#grab all existing usernames and emails from db and make into dictionary where keys, values == usernames, emails
 	existingAccounts=dict(db.execute("SELECT UserName,Email from User").fetchall())
 	#username, email, password as requests to db
 	username = str(request.form['username'])
