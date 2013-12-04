@@ -4,6 +4,8 @@ from subprocess import check_output
 import flask
 from os import environ
 import os
+import random
+import string
 import sqlite3
 import random
 import string
@@ -12,16 +14,25 @@ import hashlib
 
 
 #TODO: make a table in the database for this
-#db = shelve.open("shorts.db")
-
 
 # create our little application :)
 app = Flask(__name__)
 app.debug=True
 
+#reroutes home page to index page
 @app.route('/')
-#render create account template
-def root(message='default'):
+def sendToIndex():
+	user=environ['USER']
+	url='http://people.ischool.berkeley.edu/~'+user+'/server/index'
+	return flask.redirect(url)
+
+@app.route('/index')
+def index():
+	return flask.render_template('create_account.html')
+
+@app.route('/create_account',methods=['GET'])
+#renders create account page before and after create account form is posted
+def createAccountConfirm(message='default'):
 	if message=='default':
 		return flask.render_template('create_account.html')
 	else:
@@ -35,7 +46,6 @@ def createAccount():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	#grab all existing usernames and emails from db and make into dictionary where keys, values == usernames, emails
 	existingAccounts=dict(db.execute("SELECT UserName,Email from User").fetchall())
 	#username, email, password as requests to db
 	username = str(request.form['username'])
@@ -50,11 +60,11 @@ def createAccount():
 	else:
 		#insert new user's values into cmap db
 		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
-		h = hashlib.sha1()
+		h =hashlib.sha1()
 		#put salt and password to be hashed
 		h.update(salt)
 		h.update(password)
-		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,str(h.hexdigest())))
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
 
 		#render template account successfully created
 		#add in code to show html page once account created 
