@@ -3,8 +3,6 @@
 from subprocess import check_output
 import flask
 from os import environ
-import os
-import random
 import string
 import sqlite3
 import random
@@ -28,22 +26,32 @@ def sendToIndex():
 	return flask.redirect(url)
 
 @app.route('/index')
-def index():
-	return flask.render_template('home.html',USER=user)
+def index(message='default'):
+	if message=='default':
+		if 'username' in session:
+			return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+		else:
+			return flask.render_template('home.html',USER=user)
+	else:
+		if 'username' in session:
+			return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+		else:
+			return flask.render_template('home.html',USER=user, statusMessage=message)
+
 
 @app.route('/create_account',methods=['GET'])
 #renders create account page before and after create account form is posted
 def createAccountConfirm(message='default'):
-	if message=='default':
-		return flask.render_template('create_account.html')
+	if message!='default':
+		return flask.render_template('create_account.html',statusMessage=message)
 	else:
 		if 'username' in session:
 			return flask.render_template('create_account.html',statusMessage='Logged in as %s' % escape(session['username']))
 		else:
-			return flask.render_template('create_account.html',statusMessage=message)
+			return flask.render_template('create_account.html')
 
 @app.route('/create_account', methods=['POST'])
-def createAccount():
+def create_account():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
@@ -54,10 +62,10 @@ def createAccount():
 	password = str(request.form['password'])
 	#checks if username already in database, reloads page for user to try again
 	if username in existingAccounts:
-		return flask.render_template('create_account.html', usernameError="Username is already taken")
+		return flask.render_template('create_account.html', statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
 	if email in existingAccounts.values():
-		return flask.render_template('create_account.html',emailError="Email account already exists")
+		return flask.render_template('create_account.html',statusMessage="Email account already exists")
 	else:
 		#insert new user's values into cmap db
 		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
@@ -73,7 +81,7 @@ def createAccount():
 	conn.commit()
 	conn.close()
 	session['username']=username
-	return root("Your account is created and you are logged in")
+	return index("Your account is created and you are logged in")
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -81,7 +89,7 @@ def login():
 	password = str(request.form['password'])
 	existingAccounts=dict(db.execute("SELECT UserName from User").fetchall())
 	if(username not in existingAccounts):
-		return root("Incorrect username. Want to create an account?")
+		return index("Incorrect username. Want to create an account?")
 	salt = str(db.execute("SELECT salt FROM User WHERE UserName=?",(username)).fetchone())
 	dbHash = str(db.execute("SELECT hash FROM User WHERE UserName=?",(username)).fetchone())
 	h = hashlib.sha1()
@@ -89,15 +97,15 @@ def login():
 	h.update(password)
 	myHash = str(h.hexdigest())
 	if(myHash != dbHash):
-		return root("Incorrect password.")
+		return index("Incorrect password.")
 	#start a session
 	session['username']= username
-	return redirect("http://people.ischool.berkeley.edu/~"+os.environ['USER']+"/server/")
+	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
 	
 @app.route('/logout')
 def logout():
 	session.pop('username', None)
-	return redirect("http://people.ischool.berkeley.edu/~"+os.environ['USER']+"/server/")
+	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
 
 '''
 ###
@@ -123,17 +131,6 @@ def short(shortURL):
 	longURL = db[shortURL]
 	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
-
-@app.route('/login', methods=['POST'])
-def login():
-	username = str(request.form['username'])
-	hashword = str(request.form['passwordHash'])
-	if("the username is not in the database"):
-		return "Incorrect username. Want to create an account?"
-	else:
-		if("the password is incorrect"):
-			return "Incorrect password."
-		"start a session"
 
 @app.route('/')
 def home(newURL="default"):
