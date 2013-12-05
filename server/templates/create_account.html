@@ -1,77 +1,49 @@
 <!DOCTYPE html>
-<html> 
-<meta charset="utf-8">
-   <meta name="description" content="create an account">
-    <meta name="keywords" content="account">
-    <title> Project Part II </title>
-	<link rel="stylesheet" type="text/css" href="/Users/sabina/Desktop/style.css"/>
-  
-<script>
-    function var1() {
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="create an account">
+		<meta name="keywords" content="account">
+		<title> Project Part II </title>
 
-    if (frm.password.value == " ") 
-	{
-       alter ("Enter the password");
-	   frm.password.focus();
-	   return false;
-	}
-	if ((frm.password.value).length < 6) || (frm.password.value).length > 20)) 
-	{
-       alter ("Password should be minimum 6 character nd maximum 20 character");
-        frm.password.focus();
-		return false;
-		
-    } 
-	if (frm.confirmpassword.value == " ") 
-	{
-        alter ("Enter the Confirmation Password");
-		return false;
-        
-    } 
-	if (frm.confirmpassword.value != frm.password.valu)
-	{
-        alter ("Password confirmation does not match.");
-        return false;
-    } 
-	
-   return true;
-}  
-</script>
-</head>
-<body>
-
-
-<h1>Creat a free account</h1>
-<p>to start saving, sharing, and discovering links</p>
-<br> <br> <br> 
-
-<form name="frm" method="post"  action="create_account_withPasswor&ConfirmPasswordValidation.htm">
-
-<fieldset>
-	<label for="username">
-		<input type="text" name="username" autocomplete="on" placeholder="Username"  size="30" />
-		<span class="error-message">{{usernameError}}</span>
-	</label> <br> <br>
-	<label for="email">
-		<input type="text" name="email" autocomplete="on" placeholder="Email address"  size="30" />
-		<span class="error-message">{{emailError}}</span>
-	</label> <br><br>
-	<label for="password">
-		<input type="password" name="password" autocomplete="off" placeholder="Password"  size="30" />
-		<span class='password-reqs'>6-20 characters</span>
-		<span class="error-message"></span>
-	</label> <br><br>
-	<label for="password2">
-	<input type="password" name="password2" autocomplete="off" placeholder="Password again"  size="30"/>
-	<span class="error-message"></span>
-	</label> <br><br>
-<input type="hidden" name="rd" value="/" />
-
-<input type="submit" value="Create account!" onclick="return var1();"/> 
-</fieldset>
-
-</form> 
-
-
-</body>
+		<script>
+			function test() {
+				var password = document.forms['frm']['password'];
+				var confirmpassword = document.forms['frm']['password2'];
+				if (password.value == "" || password.value==null){
+					alert ("Enter the password");
+					password.focus();
+					return false;
+				}
+				if ((password.value).length < 6 || (password.value).length > 20){
+					alert ("Password should be between 6 and 20 characters");
+					password.focus();
+					return false;
+				}
+				if (confirmpassword.value == " "){
+					alert ("Enter the Confirmation Password");
+					return false;
+				}
+				if (confirmpassword.value != password.value){
+					alert ("Password confirmation does not match.");
+					return false;
+				}
+				return true;
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Create a free account</h1>
+		<p>to start saving, sharing, and discovering links</p>
+		<form name="frm" method="post" action="create_account" onsubmit="return test()">
+			<input type="text" name="username" placeholder="Username" size="30"/></br>
+			<input type="text" name="email" placeholder="Email address" size="30"/></br>
+			<input type="password" name="password" placeholder="Password" size="30"/></br>
+			<input type="password" name="password2" placeholder="Password again" size="30"/></br>
+			<input type="submit" value="Create account!"/> 
+			{% if statusMessage %}
+				<p>{{statusMessage}}</p>
+			{% endif %}
+		</form> 
+	</body>	
 </html>
