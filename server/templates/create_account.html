@@ -10,25 +10,21 @@
 			function test() {
 				var password = document.forms['frm']['password'];
 				var confirmpassword = document.forms['frm']['password2'];
-				if (password.value == "" || password.value==null) 
-				{
+				if (password.value == "" || password.value==null){
 					alert ("Enter the password");
 					password.focus();
 					return false;
 				}
-				if ((password.value).length < 6 || (password.value).length > 20)
-				{
+				if ((password.value).length < 6 || (password.value).length > 20){
 					alert ("Password should be between 6 and 20 characters");
 					password.focus();
 					return false;
 				}
-				if (confirmpassword.value == " ") 
-				{
+				if (confirmpassword.value == " "){
 					alert ("Enter the Confirmation Password");
 					return false;
 				}
-				if (confirmpassword.value != password.value)
-				{
+				if (confirmpassword.value != password.value){
 					alert ("Password confirmation does not match.");
 					return false;
 				}
@@ -40,11 +36,14 @@
 		<h1>Create a free account</h1>
 		<p>to start saving, sharing, and discovering links</p>
 		<form name="frm" method="post" action="create_account" onsubmit="return test()">
-			<input type="text" name="username" placeholder="Username"  size="30" /></br>
-			<input type="text" name="email" placeholder="Email address"  size="30" /></br>
-			<input type="password" name="password" placeholder="Password"  size="30" /></br>
-			<input type="password" name="password2" placeholder="Password again"  size="30"/></br>
+			<input type="text" name="username" placeholder="Username" size="30"/></br>
+			<input type="text" name="email" placeholder="Email address" size="30"/></br>
+			<input type="password" name="password" placeholder="Password" size="30"/></br>
+			<input type="password" name="password2" placeholder="Password again" size="30"/></br>
 			<input type="submit" value="Create account!"/> 
+			{% if statusMessage %}
+				<p>{{statusMessage}}</p>
+			{% endif %}
 		</form> 
 	</body>	
 </html>

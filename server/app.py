@@ -7,7 +7,7 @@ import string
 import sqlite3
 import random
 import string
-from flask import Flask,request, session, escape
+from flask import Flask,request, session, escape, redirect
 import hashlib
 
 
@@ -55,7 +55,7 @@ def create_account():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	existingAccounts=dict(db.execute("SELECT UserName,Email from User").fetchall())
+	existingAccounts=list(db.execute("SELECT username,email from User").fetchall())
 	#username, email, password as requests to db
 	username = str(request.form['username'])
 	email = str(request.form['email'])
@@ -85,13 +85,18 @@ def create_account():
 
 @app.route('/login', methods=['POST'])
 def login():
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
 	username = str(request.form['username'])
 	password = str(request.form['password'])
-	existingAccounts=dict(db.execute("SELECT UserName from User").fetchall())
-	if(username not in existingAccounts):
+	db.execute("SELECT username from User")
+	existingAccounts=[element[0] for element in db.fetchall()]
+	if unicode(username) not in existingAccounts:
 		return index("Incorrect username. Want to create an account?")
-	salt = str(db.execute("SELECT salt FROM User WHERE UserName=?",(username)).fetchone())
-	dbHash = str(db.execute("SELECT hash FROM User WHERE UserName=?",(username)).fetchone())
+	db.execute("SELECT salt FROM User WHERE username='"+username+"'")
+	salt=db.fetchone()[0]
+	db.execute("SELECT hash FROM User WHERE username='"+username+"'")
+	dbHash=db.fetchone()[0]
 	h = hashlib.sha1()
 	h.update(salt)
 	h.update(password)
@@ -99,6 +104,8 @@ def login():
 	if(myHash != dbHash):
 		return index("Incorrect password.")
 	#start a session
+	conn.commit()
+	conn.close()
 	session['username']= username
 	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
 	
