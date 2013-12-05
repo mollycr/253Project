@@ -8,7 +8,21 @@
     </head>
     <body>
         <h1>Welcome to our link shortener.</h1>
-	<p><a href="http://people.ischool.berkeley.edu/~{{USER}}/server/create_account">Create Account</a></p>
+		{% if USERNAME %}
+		<p> Welcome, {{USERNAME}}. <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a></p>
+		{% else %}
+		<div id="createLogin">
+			<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/create_account">Create Account</a>
+			<form method="POST" action="login">
+				<input type="text" id="username" name="username" placeholder="username"/>
+				<input type="password" id="password" name="password" placeholder="password"/>
+				<input type="submit" value="Log in"/>
+			</form>
+			{% if statusMessage %}
+				<p>{{statusMessage}}</p>
+			{% endif %}
+		</div>
+		{% endif %}
 	    <div class="links">
         	<form method="POST" action="shorts" name="thisForm">
             	<div>
