@@ -1,0 +1,21 @@
+body {
+text-align: center;
+background-color: #9FF781;
+margin-left: 20%; 
+margin-right: 20%;
+border-style:solid;
+border-width:1px;
+border-color:#04B404;
+padding:10px 10px 10px 10px;
+font-family:sens-serif;
+}
+fieldset {
+	border: none;
+	}
+
+.password-reqs {
+	position: absolute;
+	line-height: 36px;
+font-size: 11px;
+color: red;
+}
