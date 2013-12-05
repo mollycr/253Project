@@ -1,15 +1,120 @@
 #!/usr/bin/env python
 
-import shelve
 from subprocess import check_output
 import flask
-from flask import request
 from os import environ
+import string
+import sqlite3
+import random
+import string
+from flask import Flask,request, session, escape, redirect
+import hashlib
 
-app = flask.Flask(__name__)
-app.debug = True
-db = shelve.open("shorts.db")
 
+#TODO: make a table in the database for this
+
+# create our little application :)
+app = Flask(__name__)
+app.debug=True
+
+user=environ['USER']
+
+#reroutes home page to index page
+@app.route('/')
+def sendToIndex():
+	url='http://people.ischool.berkeley.edu/~'+user+'/server/index'
+	return flask.redirect(url)
+
+@app.route('/index')
+def index(message='default'):
+	if message=='default':
+		if 'username' in session:
+			return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+		else:
+			return flask.render_template('home.html',USER=user)
+	else:
+		if 'username' in session:
+			return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+		else:
+			return flask.render_template('home.html',USER=user, statusMessage=message)
+
+
+@app.route('/create_account',methods=['GET'])
+#renders create account page before and after create account form is posted
+def createAccountConfirm(message='default'):
+	if message!='default':
+		return flask.render_template('create_account.html',statusMessage=message)
+	else:
+		if 'username' in session:
+			return flask.render_template('create_account.html',statusMessage='Logged in as %s' % escape(session['username']))
+		else:
+			return flask.render_template('create_account.html')
+
+@app.route('/create_account', methods=['POST'])
+def create_account():
+	#connect to cmap db
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	existingAccounts=list(db.execute("SELECT username,email from User").fetchall())
+	#username, email, password as requests to db
+	username = str(request.form['username'])
+	email = str(request.form['email'])
+	password = str(request.form['password'])
+	#checks if username already in database, reloads page for user to try again
+	if username in existingAccounts:
+		return flask.render_template('create_account.html', statusMessage="Username is already taken")
+	#checks if email already in database, reloads page for user to try again
+	if email in existingAccounts.values():
+		return flask.render_template('create_account.html',statusMessage="Email account already exists")
+	else:
+		#insert new user's values into cmap db
+		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
+		h = hashlib.sha1()
+		#put salt and password to be hashed
+		h.update(salt)
+		h.update(password)
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
+
+		#render template account successfully created
+		#add in code to show html page once account created 
+	#commits and close db connection
+	conn.commit()
+	conn.close()
+	session['username']=username
+	return index("Your account is created and you are logged in")
+
+@app.route('/login', methods=['POST'])
+def login():
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	username = str(request.form['username'])
+	password = str(request.form['password'])
+	db.execute("SELECT username from User")
+	existingAccounts=[element[0] for element in db.fetchall()]
+	if unicode(username) not in existingAccounts:
+		return index("Incorrect username. Want to create an account?")
+	db.execute("SELECT salt FROM User WHERE username='"+username+"'")
+	salt=db.fetchone()[0]
+	db.execute("SELECT hash FROM User WHERE username='"+username+"'")
+	dbHash=db.fetchone()[0]
+	h = hashlib.sha1()
+	h.update(salt)
+	h.update(password)
+	myHash = str(h.hexdigest())
+	if(myHash != dbHash):
+		return index("Incorrect password.")
+	#start a session
+	conn.commit()
+	conn.close()
+	session['username']= username
+	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
+	
+@app.route('/logout')
+def logout():
+	session.pop('username', None)
+	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
+
+'''
 ###
 # This is what the html page should send data to
 ###
@@ -49,6 +154,9 @@ def processURL (url):
 		return "http://"+url
 	else:
 		return "http://www."+url
+'''
+
+app.secret_key = 'x1dc9rxe5^&cH#a0c6x10:90bd00f4edx92Wd6d2f3f'
 
 if __name__ == "__main__":
-	app.run(port=int(environ['FLASK_PORT']))
+	app.run(port=int(environ['FLASK_PORT']))	
