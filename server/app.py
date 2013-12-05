@@ -7,7 +7,9 @@ import os
 import random
 import string
 import sqlite3
-from flask import Flask,request
+import random
+import string
+from flask import Flask,request, session, escape
 import hashlib
 
 
@@ -17,31 +19,34 @@ import hashlib
 app = Flask(__name__)
 app.debug=True
 
+user=environ['USER']
+
 #reroutes home page to index page
 @app.route('/')
 def sendToIndex():
-	user=environ['USER']
 	url='http://people.ischool.berkeley.edu/~'+user+'/server/index'
 	return flask.redirect(url)
 
 @app.route('/index')
 def index():
-	return flask.render_template('create_account.html')
+	return flask.render_template('home.html',USER=user)
 
 @app.route('/create_account',methods=['GET'])
 #renders create account page before and after create account form is posted
 def createAccountConfirm(message='default'):
 	if message=='default':
-                return flask.render_template('create_account.html')
-        else:
-                return flask.render_template('create_account.html',statusMessage=message)
+		return flask.render_template('create_account.html')
+	else:
+		if 'username' in session:
+			return flask.render_template('create_account.html',statusMessage='Logged in as %s' % escape(session['username']))
+		else:
+			return flask.render_template('create_account.html',statusMessage=message)
 
 @app.route('/create_account', methods=['POST'])
 def createAccount():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	#grab all existing usernames and emails from db and make into dictionary where keys, values == usernames, emails
 	existingAccounts=dict(db.execute("SELECT UserName,Email from User").fetchall())
 	#username, email, password as requests to db
 	username = str(request.form['username'])
@@ -56,7 +61,7 @@ def createAccount():
 	else:
 		#insert new user's values into cmap db
 		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
-		h =hashlib.sha1()
+		h = hashlib.sha1()
 		#put salt and password to be hashed
 		h.update(salt)
 		h.update(password)
@@ -67,22 +72,32 @@ def createAccount():
 	#commits and close db connection
 	conn.commit()
 	conn.close()
-	return createAccountConfirm("Your account is created")
+	session['username']=username
+	return root("Your account is created and you are logged in")
 
 @app.route('/login', methods=['POST'])
 def login():
-	#TODO
 	username = str(request.form['username'])
 	password = str(request.form['password'])
-	db.execute('''''')
-	if("the username is not in the database"):
-		return "Incorrect username. Want to create an account?"
-	else:
-		
-		if("the password is incorrect"):
-			return "Incorrect password."
-		"start a session"
-
+	existingAccounts=dict(db.execute("SELECT UserName from User").fetchall())
+	if(username not in existingAccounts):
+		return root("Incorrect username. Want to create an account?")
+	salt = str(db.execute("SELECT salt FROM User WHERE UserName=?",(username)).fetchone())
+	dbHash = str(db.execute("SELECT hash FROM User WHERE UserName=?",(username)).fetchone())
+	h = hashlib.sha1()
+	h.update(salt)
+	h.update(password)
+	myHash = str(h.hexdigest())
+	if(myHash != dbHash):
+		return root("Incorrect password.")
+	#start a session
+	session['username']= username
+	return redirect("http://people.ischool.berkeley.edu/~"+os.environ['USER']+"/server/")
+	
+@app.route('/logout')
+def logout():
+	session.pop('username', None)
+	return redirect("http://people.ischool.berkeley.edu/~"+os.environ['USER']+"/server/")
 
 '''
 ###
@@ -136,6 +151,8 @@ def processURL (url):
 	else:
 		return "http://www."+url
 '''
+
+app.secret_key = 'x1dc9rxe5^&cH#a0c6x10:90bd00f4edx92Wd6d2f3f'
+
 if __name__ == "__main__":
-	app.run(port=int(environ['FLASK_PORT']))
-	
+	app.run(port=int(environ['FLASK_PORT']))	
