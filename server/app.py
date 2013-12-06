@@ -114,16 +114,20 @@ def logout():
 	session.pop('username', None)
 	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
 
-'''
+
 ###
 # This is what the html page should send data to
 ###
 @app.route('/shorts', methods=['POST'])
 def shorts():
-	begin = "people.ischool.berkeley.edu/~mrobison/server/short/"
+	begin = "people.ischool.berkeley.edu/~"+user+"/server/short/"
 	longURL = str(request.form['long'])
 	longURL = processURL(longURL)
 	shortURL = str(request.form['short'])
+	#TODO check to see if the short url is already in the db
+	# if it is, and the user specified the short, return error
+	# if it is, and the short was auto, generate a new short until it's not taken
+	# if we're good, put the long, short, 0, {username or IP} into the DB
 	db[shortURL] = longURL
 	return home(begin+shortURL)
 
@@ -133,18 +137,14 @@ def shorts():
 @app.route('/short/<shortURL>')
 def short(shortURL):
 	shortURL = str(shortURL)
+	#TODO check to see if the short URL is in the database
+	# if it is, return it and increase the counter
+	# if it's not, return 404
 	if(db.has_key(shortURL)==False):
 		return render_template('page_not_found.html'), 404
 	longURL = db[shortURL]
 	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
-
-@app.route('/')
-def home(newURL="default"):
-	if newURL=="default":
-		return flask.render_template('proj1.html')
-	else:
-		return flask.render_template('proj1.html', shortURL=newURL)
 
 def processURL (url):
 	#see if it's in http://www.google.com form
@@ -154,7 +154,7 @@ def processURL (url):
 		return "http://"+url
 	else:
 		return "http://www."+url
-'''
+
 
 app.secret_key = 'x1dc9rxe5^&cH#a0c6x10:90bd00f4edx92Wd6d2f3f'
 
