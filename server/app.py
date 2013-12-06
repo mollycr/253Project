@@ -89,12 +89,12 @@ def login():
 	db=conn.cursor()
 	username = str(request.form['username'])
 	password = str(request.form['password'])
-	db.execute("SELECT username from User")
-	existingAccounts=[element[0] for element in db.fetchall()]
-	if unicode(username) not in existingAccounts:
-		return index("Incorrect username. Want to create an account?")
+	#check if user exists
 	db.execute("SELECT salt FROM User WHERE username='"+username+"'")
-	salt=db.fetchone()[0]
+	salt=db.fetchone()
+	if salt is None:
+		return index("Incorrect username. Want to create an account?")
+	salt=salt[0]
 	db.execute("SELECT hash FROM User WHERE username='"+username+"'")
 	dbHash=db.fetchone()[0]
 	h = hashlib.sha1()
@@ -120,15 +120,39 @@ def logout():
 ###
 @app.route('/shorts', methods=['POST'])
 def shorts():
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
 	begin = "people.ischool.berkeley.edu/~"+user+"/server/short/"
 	longURL = str(request.form['long'])
 	longURL = processURL(longURL)
 	shortURL = str(request.form['short'])
-	#TODO check to see if the short url is already in the db
-	# if it is, and the user specified the short, return error
-	# if it is, and the short was auto, generate a new short until it's not taken
+	generated = False
+	username = ""
+	if 'username' in session:
+		username = session['username']
+	else:
+		username = str(request.remote_addr)
+	if shortURL=="":
+		shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
+		generated = True
+	#check to see if the short url is already in the db
+	db.execute("SELECT * FROM Urls WHERE short='"+shortURL+"'")
+	if db.fetchone() is not None:
+		if generated:
+			# if it is, and the short was auto, generate a new short until it's not taken
+			flag = False
+			while(flag==False):
+				shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
+				db.execute("SELECT * FROM Urls WHERE short='"+shortURL+"'")
+				if db.fetchone() is None:
+					flag = True
+		else:
+			# if it is, and the user specified the short, return error
+			return index("That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
-	db[shortURL] = longURL
+	db.execute("INSERT INTO Urls VALUES(?,?,?,?)",(longURL,shortURL,0,username))
+	conn.commit()
+	conn.close()
 	return home(begin+shortURL)
 
 ###
@@ -137,12 +161,19 @@ def shorts():
 @app.route('/short/<shortURL>')
 def short(shortURL):
 	shortURL = str(shortURL)
-	#TODO check to see if the short URL is in the database
-	# if it is, return it and increase the counter
-	# if it's not, return 404
-	if(db.has_key(shortURL)==False):
+	#check to see if the short URL is in the database
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	db.execute("SELECT url from Urls WHERE short='"+shortURL+"'")
+	longURL = db.fetchone()
+	#if it's not, return 404
+	if longURL is None:
 		return render_template('page_not_found.html'), 404
-	longURL = db[shortURL]
+	# if it is, return it and increase the counter
+	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short='"+shortURL+"'")
+	longURL = longURL[0]
+	conn.commit()
+	conn.close()
 	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
 
