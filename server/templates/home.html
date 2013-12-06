@@ -9,7 +9,10 @@
     <body>
         <h1>Welcome to our link shortener.</h1>
 		{% if USERNAME %}
-		<p> Welcome, {{USERNAME}}. <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a></p>
+		<p> Welcome, {{USERNAME}}.</br>
+			<a href="myAccount">My Account</a></br>
+			<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a>
+		</p>
 		{% else %}
 		<div id="createLogin">
 			<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/create_account">Create Account</a>
