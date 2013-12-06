@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS User;
-CREATE TABLE User(username VARCHAR(32), email VARCHAR(128), salt CHAR(40), hash CHAR(40));
-
 DROP TABLE IF EXISTS Urls;
-CREATE TABLE Urls(url VARCHAR(256), short VARCHAR(32), timesVisited INTEGER);
+CREATE TABLE Urls(url VARCHAR(256), short VARCHAR(32), timesVisited INTEGER, username VARCHAR(32));
+CREATE TABLE User(username VARCHAR(32), email VARCHAR(128), salt CHAR(40), hash CHAR(40));
