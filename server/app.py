@@ -2,7 +2,7 @@
 
 from subprocess import check_output
 import flask
-from os import environ
+import os
 import string
 import sqlite3
 import random
@@ -17,7 +17,7 @@ import hashlib
 app = Flask(__name__)
 app.debug=True
 
-user=environ['USER']
+user=os.environ['USER']
 
 #reroutes home page to index page
 @app.route('/')
@@ -200,7 +200,7 @@ def processURL (url):
 		return "http://www."+url
 
 
-app.secret_key = 'x1dc9rxe5^&cH#a0c6x10:90bd00f4edx92Wd6d2f3f'
+app.secret_key = os.urandom(24)
 
 if __name__ == "__main__":
-	app.run(port=int(environ['FLASK_PORT']))	
+	app.run(port=int(os.environ['FLASK_PORT']))	
