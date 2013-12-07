@@ -80,6 +80,9 @@ def create_account():
 	if db.fetchone() is not None:
 		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
+		#check to see if we have any urls from when they didn't have a username
+		ip = request.remote_addr
+		db.execute("UPDATE Urls SET username='"+username+"' WHERE username='"+ip+"'")
 		#insert new user's values into cmap db
 		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
 		h = hashlib.sha1()
