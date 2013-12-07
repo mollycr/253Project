@@ -166,7 +166,7 @@ def shorts():
 			# if it is, and the user specified the short, return error
 			return index("That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
-	db.execute("INSERT INTO Urls VALUES(?,?,?,?)",(longURL,shortURL,0,username))
+	db.execute("INSERT INTO Urls VALUES(?,?,?,?,current_timestamp)",(longURL,shortURL,0,username))
 	conn.commit()
 	conn.close()
 	return index(url=begin+shortURL)
