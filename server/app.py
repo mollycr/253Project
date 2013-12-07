@@ -8,7 +8,7 @@ import sqlite3
 import random
 import string
 from flask import Flask,request, session, escape, redirect
-import hashlib
+import bcrypt
 
 
 #TODO: make a table in the database for this
@@ -84,12 +84,9 @@ def create_account():
 		ip = request.remote_addr
 		db.execute("UPDATE Urls SET username=? WHERE username=?", username, ip)
 		#insert new user's values into cmap db
-		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
-		h = hashlib.sha1()
-		#put salt and password to be hashed
-		h.update(salt)
-		h.update(password)
-		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
+
+		hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,hashed)
 
 		#render template account successfully created
 		#add in code to show html page once account created 
@@ -106,18 +103,11 @@ def login():
 	username = str(request.form['username'])
 	password = str(request.form['password'])
 	#check if user exists
-	db.execute("SELECT salt FROM User WHERE username=?", username)
-	salt=db.fetchone()
-	if salt is None:
-		return index("Incorrect username. Want to create an account?")
-	salt=salt[0]
 	db.execute("SELECT hash FROM User WHERE username=?", username)
-	dbHash=db.fetchone()[0]
-	h = hashlib.sha1()
-	h.update(salt)
-	h.update(password)
-	myHash = str(h.hexdigest())
-	if(myHash != dbHash):
+	hashed=db.fetchone()
+	if hashed is None:
+		return index("Incorrect username. Want to create an account?")
+	if bcrypt.hashpw(password, hashed) != hashed:
 		return index("Incorrect password.")
 	#start a session
 	conn.commit()
