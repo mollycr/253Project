@@ -2,7 +2,7 @@
 
 from subprocess import check_output
 import flask
-from os import environ
+import os
 import string
 import sqlite3
 import random
@@ -17,7 +17,7 @@ import hashlib
 app = Flask(__name__)
 app.debug=True
 
-user=environ['USER']
+user=os.environ['USER']
 
 #reroutes home page to index page
 @app.route('/')
@@ -72,14 +72,17 @@ def create_account():
 	password = str(request.form['password'])
 
 	#checks if username already in database, reloads page for user to try again
-	db.execute("SELECT email FROM User WHERE username='"+username+"'")
+	db.execute("SELECT email FROM User WHERE username=?", username)
 	if db.fetchone() is not None:
 		return flask.render_template('create_account.html', statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
-	db.execute("SELECT username FROM User WHERE email='"+email+"'")
+	db.execute("SELECT username FROM User WHERE email=?", email)
 	if db.fetchone() is not None:
 		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
+		#check to see if we have any urls from when they didn't have a username
+		ip = request.remote_addr
+		db.execute("UPDATE Urls SET username=? WHERE username=?", username, ip)
 		#insert new user's values into cmap db
 		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
 		h = hashlib.sha1()
@@ -103,12 +106,12 @@ def login():
 	username = str(request.form['username'])
 	password = str(request.form['password'])
 	#check if user exists
-	db.execute("SELECT salt FROM User WHERE username='"+username+"'")
+	db.execute("SELECT salt FROM User WHERE username=?", username)
 	salt=db.fetchone()
 	if salt is None:
 		return index("Incorrect username. Want to create an account?")
 	salt=salt[0]
-	db.execute("SELECT hash FROM User WHERE username='"+username+"'")
+	db.execute("SELECT hash FROM User WHERE username=?", username)
 	dbHash=db.fetchone()[0]
 	h = hashlib.sha1()
 	h.update(salt)
@@ -149,21 +152,21 @@ def shorts():
 		shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
 		generated = True
 	#check to see if the short url is already in the db
-	db.execute("SELECT * FROM Urls WHERE short='"+shortURL+"'")
+	db.execute("SELECT * FROM Urls WHERE short=?", shortURL)
 	if db.fetchone() is not None:
 		if generated:
 			# if it is, and the short was auto, generate a new short until it's not taken
 			flag = False
 			while(flag==False):
 				shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
-				db.execute("SELECT * FROM Urls WHERE short='"+shortURL+"'")
+				db.execute("SELECT * FROM Urls WHERE short=?", shortURL)
 				if db.fetchone() is None:
 					flag = True
 		else:
 			# if it is, and the user specified the short, return error
 			return index("That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
-	db.execute("INSERT INTO Urls VALUES(?,?,?,?)",(longURL,shortURL,0,username))
+	db.execute("INSERT INTO Urls VALUES(?,?,?,?,current_timestamp)",(longURL,shortURL,0,username))
 	conn.commit()
 	conn.close()
 	return index(url=begin+shortURL)
@@ -177,13 +180,13 @@ def short(shortURL):
 	#check to see if the short URL is in the database
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	db.execute("SELECT url from Urls WHERE short='"+shortURL+"'")
+	db.execute("SELECT url from Urls WHERE short=?", shortURL)
 	longURL = db.fetchone()
 	#if it's not, return 404
 	if longURL is None:
 		return render_template('page_not_found.html'), 404
 	# if it is, return it and increase the counter
-	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short='"+shortURL+"'")
+	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short=?", shortURL)
 	longURL = longURL[0]
 	conn.commit()
 	conn.close()
@@ -200,7 +203,7 @@ def processURL (url):
 		return "http://www."+url
 
 
-app.secret_key = 'x1dc9rxe5^&cH#a0c6x10:90bd00f4edx92Wd6d2f3f'
+app.secret_key = os.urandom(24)
 
 if __name__ == "__main__":
-	app.run(port=int(environ['FLASK_PORT']))	
+	app.run(port=int(os.environ['FLASK_PORT']))	
