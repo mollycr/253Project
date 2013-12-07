@@ -66,17 +66,19 @@ def create_account():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	existingAccounts=list(db.execute("SELECT username,email from User").fetchall())
-	#username, email, password as requests to db
+	#create things from form
 	username = str(request.form['username'])
 	email = str(request.form['email'])
 	password = str(request.form['password'])
+
 	#checks if username already in database, reloads page for user to try again
-	if username in existingAccounts:
+	db.execute("SELECT email FROM User WHERE username='"+username+"'")
+	if db.fetchone() is not None:
 		return flask.render_template('create_account.html', statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
-	if email in existingAccounts.values():
-		return flask.render_template('create_account.html',statusMessage="Email account already exists")
+	db.execute("SELECT username FROM User WHERE email='"+email+"'")
+	if db.fetchone() is not None:
+		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
 		#insert new user's values into cmap db
 		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
