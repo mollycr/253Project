@@ -26,18 +26,29 @@ def sendToIndex():
 	return flask.redirect(url)
 
 @app.route('/index')
-def index(message='default'):
+def index(message='default', url='default'):
 	if message=='default':
-		if 'username' in session:
-			return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+		if url=='default':
+			if 'username' in session:
+				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+			else:
+				return flask.render_template('home.html',USER=user)
 		else:
-			return flask.render_template('home.html',USER=user)
+			if 'username' in session:
+				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']),shortURL=url)
+			else:
+				return flask.render_template('home.html',USER=user,shortURL=url)
 	else:
-		if 'username' in session:
-			return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+		if url=='default':
+			if 'username' in session:
+				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+			else:
+				return flask.render_template('home.html',USER=user, statusMessage=message)
 		else:
-			return flask.render_template('home.html',USER=user, statusMessage=message)
-
+			if 'username' in session:
+				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+			else:
+				return flask.render_template('home.html',USER=user, statusMessage=message, shortURL=url)
 
 @app.route('/create_account',methods=['GET'])
 #renders create account page before and after create account form is posted
@@ -153,7 +164,7 @@ def shorts():
 	db.execute("INSERT INTO Urls VALUES(?,?,?,?)",(longURL,shortURL,0,username))
 	conn.commit()
 	conn.close()
-	return home(begin+shortURL)
+	return index(url=begin+shortURL)
 
 ###
 # Redirection: 
