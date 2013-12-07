@@ -23,7 +23,33 @@ import webbrowser
 #When form submitted by clicking "Delete Links" at bottom, we can drop rows related to those links. 
 #What would be better is allowing a delete that doesn't force rerendering of entire page. 
 
-    
+####################
+#	So all we need to generate here is the table that's going into the html page
+#	Once we have that table, we're going to plug it into the page through flask, using the curly-brace thing.
+#	So, we need to pull all the relavent information from the database and massage it into a table
+#
+
+def create_table(username):
+	#generate the starting html
+	tableStart = '''<table id="links">
+						<th>
+							<td>Long url</td>
+				etc
+				'''
+	#get all the user's links from the database:
+	#SELECT * FROM Urls WHERE user=username
+
+	#for every link in that table:
+		#start another row of html
+		tableRow = "<tr>"
+		#add table cells to that for all the relavent information
+		
+		#add a cell with the tags in it:
+		#SELECT tag FROM Tags WHERE short=short
+		#for all the tags:
+			#add the tag text
+
+  
 def add_row(long, short, clicks, tags):
 
     #create new html file or overwrite file if it already exists
@@ -32,7 +58,7 @@ def add_row(long, short, clicks, tags):
     #create start tags for html doc
     start_html = '<!DOCTYPE html><html><header><title></title></header><body>'
 
-    row_html = '<TR> <TD></TD><TD>%s</TD><TD>%s</TD><TD>%d</TD><TD><input type="checkbox" value="enrolled" unchecked></TD><TD>%s</TD> % (long, short, clicks, tags)
+    row_html = '<TR> <TD></TD><TD>%s</TD><TD>%s</TD><TD>%d</TD><TD><input type="checkbox" value="enrolled" unchecked></TD><TD>%s</TD> % (long, short, clicks, tags)'
 
     end_html = '</body></html>'
 
