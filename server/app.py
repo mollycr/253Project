@@ -130,6 +130,12 @@ def logout():
 	session.pop('username', None)
 	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
 
+@app.route('/myAccount')
+def myAccount:
+	#Insert html generation here
+	#TODO
+	html = "Coming Soon!"
+	return flask.render_template('my_account.html',USER=user,LinkTable=html)
 
 ###
 # This is what the html page should send data to
