@@ -72,24 +72,26 @@ def create_account():
 	password = str(request.form['password'])
 
 	#checks if username already in database, reloads page for user to try again
-	db.execute("SELECT email FROM User WHERE username=?", username)
-	if db.fetchone() is not None:
+	usernameList=db.execute("SELECT email FROM User").fetchall()
+	if username in usernameList:
 		return flask.render_template('create_account.html', statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
-	db.execute("SELECT username FROM User WHERE email=?", email)
-	if db.fetchone() is not None:
+	emailList=db.execute("SELECT username FROM User").fetchall()
+	if email in emailList:
 		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
 		#check to see if we have any urls from when they didn't have a username
 		ip = request.remote_addr
-		db.execute("UPDATE Urls SET username=? WHERE username=?", username, ip)
+		if ip in usernameList:
+			db.execute("UPDATE Urls SET username=? WHERE username=?", username, ip)
+		else:
 		#insert new user's values into cmap db
-		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
-		h = hashlib.sha1()
-		#put salt and password to be hashed
-		h.update(salt)
-		h.update(password)
-		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
+			salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
+			h = hashlib.sha1()
+			#put salt and password to be hashed
+			h.update(salt)
+			h.update(password)
+			db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
 
 		#render template account successfully created
 		#add in code to show html page once account created 
@@ -131,7 +133,7 @@ def logout():
 	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
 
 @app.route('/myAccount')
-def myAccount:
+def myAccount():
 	#Insert html generation here
 	#TODO
 	html = "Coming Soon!"
@@ -158,21 +160,20 @@ def shorts():
 		shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
 		generated = True
 	#check to see if the short url is already in the db
-	db.execute("SELECT * FROM Urls WHERE short=?", shortURL)
-	if db.fetchone() is not None:
+	shortUrlList=db.execute("SELECT short FROM Urls").fetchall()
+	if shortURL not in shortUrlList:
 		if generated:
 			# if it is, and the short was auto, generate a new short until it's not taken
 			flag = False
 			while(flag==False):
 				shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
-				db.execute("SELECT * FROM Urls WHERE short=?", shortURL)
-				if db.fetchone() is None:
+				if shortURL in shortUrlList:
 					flag = True
 		else:
 			# if it is, and the user specified the short, return error
 			return index("That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
-	db.execute("INSERT INTO Urls VALUES(?,?,?,?,current_timestamp)",(longURL,shortURL,0,username))
+	db.execute("INSERT INTO Urls VALUES(?,?,?,?,datetime('now','localtime'))",(longURL,shortURL,0,username))
 	conn.commit()
 	conn.close()
 	return index(url=begin+shortURL)
