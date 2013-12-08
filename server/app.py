@@ -4,12 +4,12 @@ from subprocess import check_output
 import flask
 import os
 import string
+import hashlib
 import sqlite3
 import random
 import string
 from flask import Flask,request, session, escape, redirect
 import bcrypt
-
 
 #TODO: make a table in the database for this
 
@@ -91,7 +91,7 @@ def create_account():
 			#put salt and password to be hashed
 			h.update(salt)
 			h.update(password)
-			db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
+			db.execute('''INSERT INTO User VALUES(?,?,?)''',(username,email,h.hexdigest()))
 
 		#render template account successfully created
 		#add in code to show html page once account created 
