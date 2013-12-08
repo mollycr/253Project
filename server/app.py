@@ -108,9 +108,11 @@ def login():
 	username = str(request.form['username'])
 	password = str(request.form['password'])
 	#check if user exists
-	db.execute("SELECT hash FROM User WHERE username=?", username)
-	hashed=db.fetchone()
-	if hashed is None:
+	#db.execute("SELECT hash FROM User WHERE username=?", username)
+	#hashed=db.fetchone()
+	#if hashed is None:
+	usernameList=db.execute("SELECT username FROM User").fetchall()
+	if username in usernameList:
 		return index("Incorrect username. Want to create an account?")
 	if bcrypt.hashpw(password, hashed) != hashed:
 		return index("Incorrect password.")
