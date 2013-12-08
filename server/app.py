@@ -2,13 +2,13 @@
 
 from subprocess import check_output
 import flask
-from os import environ
+import os
 import string
 import sqlite3
 import random
 import string
 from flask import Flask,request, session, escape, redirect
-import hashlib
+import bcrypt
 
 
 #TODO: make a table in the database for this
@@ -17,7 +17,7 @@ import hashlib
 app = Flask(__name__)
 app.debug=True
 
-user=environ['USER']
+user=os.environ['USER']
 
 #reroutes home page to index page
 @app.route('/')
@@ -26,18 +26,29 @@ def sendToIndex():
 	return flask.redirect(url)
 
 @app.route('/index')
-def index(message='default'):
+def index(message='default', url='default'):
 	if message=='default':
-		if 'username' in session:
-			return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+		if url=='default':
+			if 'username' in session:
+				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+			else:
+				return flask.render_template('home.html',USER=user)
 		else:
-			return flask.render_template('home.html',USER=user)
+			if 'username' in session:
+				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']),shortURL=url)
+			else:
+				return flask.render_template('home.html',USER=user,shortURL=url)
 	else:
-		if 'username' in session:
-			return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+		if url=='default':
+			if 'username' in session:
+				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+			else:
+				return flask.render_template('home.html',USER=user, statusMessage=message)
 		else:
-			return flask.render_template('home.html',USER=user, statusMessage=message)
-
+			if 'username' in session:
+				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+			else:
+				return flask.render_template('home.html',USER=user, statusMessage=message, shortURL=url)
 
 @app.route('/create_account',methods=['GET'])
 #renders create account page before and after create account form is posted
@@ -55,25 +66,27 @@ def create_account():
 	#connect to cmap db
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	existingAccounts=list(db.execute("SELECT username,email from User").fetchall())
-	#username, email, password as requests to db
+	#create things from form
 	username = str(request.form['username'])
 	email = str(request.form['email'])
 	password = str(request.form['password'])
+
 	#checks if username already in database, reloads page for user to try again
-	if username in existingAccounts:
+	db.execute("SELECT email FROM User WHERE username=?", username)
+	if db.fetchone() is not None:
 		return flask.render_template('create_account.html', statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
-	if email in existingAccounts.values():
-		return flask.render_template('create_account.html',statusMessage="Email account already exists")
+	db.execute("SELECT username FROM User WHERE email=?", email)
+	if db.fetchone() is not None:
+		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
+		#check to see if we have any urls from when they didn't have a username
+		ip = request.remote_addr
+		db.execute("UPDATE Urls SET username=? WHERE username=?", username, ip)
 		#insert new user's values into cmap db
-		salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
-		h = hashlib.sha1()
-		#put salt and password to be hashed
-		h.update(salt)
-		h.update(password)
-		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,h.hexdigest()))
+
+		hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+		db.execute('''INSERT INTO User VALUES(?,?,?,?)''',(username,email,salt,hashed)
 
 		#render template account successfully created
 		#add in code to show html page once account created 
@@ -89,19 +102,12 @@ def login():
 	db=conn.cursor()
 	username = str(request.form['username'])
 	password = str(request.form['password'])
-	db.execute("SELECT username from User")
-	existingAccounts=[element[0] for element in db.fetchall()]
-	if unicode(username) not in existingAccounts:
+	#check if user exists
+	db.execute("SELECT hash FROM User WHERE username=?", username)
+	hashed=db.fetchone()
+	if hashed is None:
 		return index("Incorrect username. Want to create an account?")
-	db.execute("SELECT salt FROM User WHERE username='"+username+"'")
-	salt=db.fetchone()[0]
-	db.execute("SELECT hash FROM User WHERE username='"+username+"'")
-	dbHash=db.fetchone()[0]
-	h = hashlib.sha1()
-	h.update(salt)
-	h.update(password)
-	myHash = str(h.hexdigest())
-	if(myHash != dbHash):
+	if bcrypt.hashpw(password, hashed) != hashed:
 		return index("Incorrect password.")
 	#start a session
 	conn.commit()
@@ -114,18 +120,52 @@ def logout():
 	session.pop('username', None)
 	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
 
-'''
+@app.route('/myAccount')
+def myAccount:
+	#Insert html generation here
+	#TODO
+	html = "Coming Soon!"
+	return flask.render_template('my_account.html',USER=user,LinkTable=html)
+
 ###
 # This is what the html page should send data to
 ###
 @app.route('/shorts', methods=['POST'])
 def shorts():
-	begin = "people.ischool.berkeley.edu/~mrobison/server/short/"
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	begin = "people.ischool.berkeley.edu/~"+user+"/server/short/"
 	longURL = str(request.form['long'])
 	longURL = processURL(longURL)
 	shortURL = str(request.form['short'])
-	db[shortURL] = longURL
-	return home(begin+shortURL)
+	generated = False
+	username = ""
+	if 'username' in session:
+		username = session['username']
+	else:
+		username = str(request.remote_addr)
+	if shortURL=="":
+		shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
+		generated = True
+	#check to see if the short url is already in the db
+	db.execute("SELECT * FROM Urls WHERE short=?", shortURL)
+	if db.fetchone() is not None:
+		if generated:
+			# if it is, and the short was auto, generate a new short until it's not taken
+			flag = False
+			while(flag==False):
+				shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
+				db.execute("SELECT * FROM Urls WHERE short=?", shortURL)
+				if db.fetchone() is None:
+					flag = True
+		else:
+			# if it is, and the user specified the short, return error
+			return index("That short URL was already taken. Try again.")
+	# if we're good, put the long, short, 0, {username or IP} into the DB
+	db.execute("INSERT INTO Urls VALUES(?,?,?,?,current_timestamp)",(longURL,shortURL,0,username))
+	conn.commit()
+	conn.close()
+	return index(url=begin+shortURL)
 
 ###
 # Redirection: 
@@ -133,18 +173,21 @@ def shorts():
 @app.route('/short/<shortURL>')
 def short(shortURL):
 	shortURL = str(shortURL)
-	if(db.has_key(shortURL)==False):
+	#check to see if the short URL is in the database
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	db.execute("SELECT url from Urls WHERE short=?", shortURL)
+	longURL = db.fetchone()
+	#if it's not, return 404
+	if longURL is None:
 		return render_template('page_not_found.html'), 404
-	longURL = db[shortURL]
+	# if it is, return it and increase the counter
+	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short=?", shortURL)
+	longURL = longURL[0]
+	conn.commit()
+	conn.close()
 	return flask.redirect(longURL)
 	#redirect to whatever long URL is associated
-
-@app.route('/')
-def home(newURL="default"):
-	if newURL=="default":
-		return flask.render_template('proj1.html')
-	else:
-		return flask.render_template('proj1.html', shortURL=newURL)
 
 def processURL (url):
 	#see if it's in http://www.google.com form
@@ -154,9 +197,9 @@ def processURL (url):
 		return "http://"+url
 	else:
 		return "http://www."+url
-'''
 
-app.secret_key = 'x1dc9rxe5^&cH#a0c6x10:90bd00f4edx92Wd6d2f3f'
+
+app.secret_key = os.urandom(24)
 
 if __name__ == "__main__":
-	app.run(port=int(environ['FLASK_PORT']))	
+	app.run(port=int(os.environ['FLASK_PORT']))	
