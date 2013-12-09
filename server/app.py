@@ -80,15 +80,10 @@ def create_account():
 		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
 		#check to see if we have any urls from when they didn't have a username
-		ip = request.remote_addr
-		if ip in usernameList:
-			db.execute("UPDATE Urls SET username=? WHERE username=?", (username, ip))
-		else:
-		#insert new user's values into cmap db
-			hashed = bcrypt.hashpw(password, bcrypt.gensalt())
-			db.execute('''INSERT INTO User VALUES(?,?,?)''',(username,email,hashed))
-		#render template account successfully created
-		#add in code to show html page once account created 
+		db.execute("UPDATE Urls SET username=? WHERE username=?", (username, request.remote_addr)) #can't hurt
+		#insert new user's values into cmap
+		hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+		db.execute('''INSERT INTO User VALUES(?,?,?)''',(username,email,hashed))
 	#commits and close db connection
 	conn.commit()
 	conn.close()
