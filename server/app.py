@@ -11,7 +11,6 @@ import string
 from flask import Flask,request, session, escape, redirect
 import bcrypt
 
-#TODO: make a table in the database for this
 
 # create our little application :)
 app = Flask(__name__)
