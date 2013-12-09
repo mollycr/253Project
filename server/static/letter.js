@@ -2,7 +2,7 @@ function allLetter()
 {
 	var short = document.forms["thisForm"]["short"];
 	var letters = /^[A-Za-z]+$/;
-	if(short.value.match(letters))
+	if(short.value.match(letters)||short.value==null||short.value=="")
 	{
 		return true;
 	}
