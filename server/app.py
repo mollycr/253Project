@@ -71,12 +71,12 @@ def create_account():
 	password = str(request.form['password'])
 
 	#checks if username already in database, reloads page for user to try again
-	usernameList=db.execute("SELECT email FROM User").fetchall()
-	if username in usernameList:
+	em=db.execute("SELECT email FROM User WHERE username=?", username).fetchone()
+	if em is not None:
 		return flask.render_template('create_account.html', statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
-	emailList=db.execute("SELECT username FROM User").fetchall()
-	if email in emailList:
+	un=db.execute("SELECT username FROM User WHERE email=?", email).fetchone()
+	if un is not None:
 		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
 		#check to see if we have any urls from when they didn't have a username
@@ -107,11 +107,9 @@ def login():
 	username = str(request.form['username'])
 	password = str(request.form['password'])
 	#check if user exists
-	#db.execute("SELECT hash FROM User WHERE username=?", username)
-	#hashed=db.fetchone()
-	#if hashed is None:
-	usernameList=db.execute("SELECT username FROM User").fetchall()
-	if username in usernameList:
+	db.execute("SELECT hash FROM User WHERE username=?", username)
+	hashed=db.fetchone()
+	if hashed is None:
 		return index("Incorrect username. Want to create an account?")
 	if bcrypt.hashpw(password, hashed) != hashed:
 		return index("Incorrect password.")
@@ -119,19 +117,85 @@ def login():
 	conn.commit()
 	conn.close()
 	session['username']= username
-	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
+	return index()
 	
 @app.route('/logout')
 def logout():
 	session.pop('username', None)
-	return redirect("http://people.ischool.berkeley.edu/~"+user+"/server/")
+	return index()
 
 @app.route('/myAccount')
 def myAccount():
 	#Insert html generation here
-	#TODO
-	html = "Coming Soon!"
+	#TODO test
+
+	#generate the starting html
+	html = '''<form id="deleteLinks" action="delete" method="post">
+						<table id="links">
+							<th>
+								<td>Long url</td>
+								<td>Short url</td>
+								<td>Number of visits</td>
+								<td>Tags</td>
+								<td>Created</td>
+								<td>Delete?</td>
+							</th>
+				'''
+	tableEnd = '</table> <input type="submit" value="Delete selected"/> </form>'
+	rowTemplate = '''<tr>
+						<td> %(long) </td>
+						<td> %(short) </td>
+						<td> %(visits) </td>
+						<td> %(tags) </td>
+						<td> %(timestamp) </td>
+						<td> <input type="checkbox" name="delete" value="%(short)"/> </td
+					</tr>
+				'''
+	#get all the user's links from the database:
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	username = session['username']
+	db.execute("SELECT url, short, timesVisited, currentTime FROM Urls WHERE username=?", username)
+	row = db.fetchone()
+	#row is a... list? array? whatever of all the values
+
+	while row is not None:
+	#for every link in that table:
+		longURL = row[0]
+		shortURL = row[1]
+		visits = row[2]
+		timestamp = row[3]
+		tags = ""
+		#get the tags for that link
+		db.execute("SELECT tag FROM Tags WHERE short=?", shortURL)
+		tagsList = db.fetchall()
+		for tag in tagsList:
+			 tags += tag[0]
+		#add all the information into the template
+		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags}
+		#add the template to the main
+		html += row
+		row = db.fetchone()
+
+	html += tableEnd
+	conn.commit()
+	conn.close()
 	return flask.render_template('my_account.html',USER=user,LinkTable=html)
+
+@app.route('/delete', methods=['POST'])
+def delete():
+	#delete the selected rows from the table
+	#TODO test
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+
+	toDelete = request.form.getlist("delete")
+	for short in toDelete:
+		db.execute("DELETE FROM Urls WHERE short=?", short)
+
+	conn.commit()
+	conn.close()
+	return myAccount()
 
 ###
 # This is what the html page should send data to
