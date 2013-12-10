@@ -71,29 +71,19 @@ def create_account():
 	password = str(request.form['password'])
 
 	#checks if username already in database, reloads page for user to try again
-	em=db.execute("SELECT email FROM User WHERE username=?", username).fetchone()
+	em=db.execute("SELECT email FROM User WHERE username=?", (username,)).fetchone()
 	if em is not None:
 		return flask.render_template('create_account.html', statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
-	un=db.execute("SELECT username FROM User WHERE email=?", email).fetchone()
+	un=db.execute("SELECT username FROM User WHERE email=?", (email,)).fetchone()
 	if un is not None:
 		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
 	else:
 		#check to see if we have any urls from when they didn't have a username
-		ip = request.remote_addr
-		if ip in usernameList:
-			db.execute("UPDATE Urls SET username=? WHERE username=?", username, ip)
-		else:
-		#insert new user's values into cmap db
-			salt = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(40))
-			h = hashlib.sha1()
-			#put salt and password to be hashed
-			h.update(salt)
-			h.update(password)
-			db.execute('''INSERT INTO User VALUES(?,?,?)''',(username,email,h.hexdigest()))
-
-		#render template account successfully created
-		#add in code to show html page once account created 
+		db.execute("UPDATE Urls SET username=? WHERE username=?", (username, request.remote_addr)) #can't hurt
+		#insert new user's values into cmap
+		hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+		db.execute('''INSERT INTO User VALUES(?,?,?)''',(username,email,hashed))
 	#commits and close db connection
 	conn.commit()
 	conn.close()
@@ -107,7 +97,7 @@ def login():
 	username = str(request.form['username'])
 	password = str(request.form['password'])
 	#check if user exists
-	db.execute("SELECT hash FROM User WHERE username=?", username)
+	db.execute("SELECT hash FROM User WHERE username=?", (username,))
 	hashed=db.fetchone()
 	if hashed is None:
 		return index("Incorrect username. Want to create an account?")
@@ -155,7 +145,7 @@ def myAccount():
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
 	username = session['username']
-	db.execute("SELECT url, short, timesVisited, currentTime FROM Urls WHERE username=?", username)
+	db.execute("SELECT url, short, timesVisited, currentTime FROM Urls WHERE username=?", (username,))
 	row = db.fetchone()
 	#row is a... list? array? whatever of all the values
 
@@ -167,7 +157,7 @@ def myAccount():
 		timestamp = row[3]
 		tags = ""
 		#get the tags for that link
-		db.execute("SELECT tag FROM Tags WHERE short=?", shortURL)
+		db.execute("SELECT tag FROM Tags WHERE short=?", (shortURL,))
 		tagsList = db.fetchall()
 		for tag in tagsList:
 			 tags += tag[0]
@@ -191,7 +181,7 @@ def delete():
 
 	toDelete = request.form.getlist("delete")
 	for short in toDelete:
-		db.execute("DELETE FROM Urls WHERE short=?", short)
+		db.execute("DELETE FROM Urls WHERE short=?", (short,))
 
 	conn.commit()
 	conn.close()
@@ -207,25 +197,29 @@ def shorts():
 	begin = "people.ischool.berkeley.edu/~"+user+"/server/short/"
 	longURL = str(request.form['long'])
 	longURL = processURL(longURL)
-	shortURL = str(request.form['short'])
 	generated = False
+	shortURL = ""
+	if(request.form["URL"]=="autoCreate"):
+		generated = True
+		shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
+	else:
+		shortURL = str(request.form['short'])
 	username = ""
+
 	if 'username' in session:
 		username = session['username']
 	else:
 		username = str(request.remote_addr)
-	if shortURL=="":
-		shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
-		generated = True
+
 	#check to see if the short url is already in the db
-	shortUrlList=db.execute("SELECT short FROM Urls").fetchall()
-	if shortURL not in shortUrlList:
+	shortUrlList=db.execute("SELECT * FROM Urls WHERE short=?", (shortURL,)).fetchone()
+	if shortUrlList is not None:
 		if generated:
 			# if it is, and the short was auto, generate a new short until it's not taken
 			flag = False
 			while(flag==False):
 				shortURL = ''.join(random.choice(string.ascii_lowercase+string.digits) for x in range(6))
-				if shortURL in shortUrlList:
+				if shortURL not in shortUrlList:
 					flag = True
 		else:
 			# if it is, and the user specified the short, return error
@@ -245,13 +239,13 @@ def short(shortURL):
 	#check to see if the short URL is in the database
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
-	db.execute("SELECT url from Urls WHERE short=?", shortURL)
+	db.execute("SELECT url from Urls WHERE short=?", (shortURL,))
 	longURL = db.fetchone()
 	#if it's not, return 404
 	if longURL is None:
 		return render_template('page_not_found.html'), 404
 	# if it is, return it and increase the counter
-	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short=?", shortURL)
+	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short=?", (shortURL,))
 	longURL = longURL[0]
 	conn.commit()
 	conn.close()

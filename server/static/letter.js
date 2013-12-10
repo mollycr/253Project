@@ -1,16 +1,24 @@
 function allLetter()
 {
-	var short = document.forms["thisForm"]["short"];
-	var letters = /^[A-Za-z]+$/;
-	if(short.value.match(letters)||short.value==null||short.value=="")
-	{
+	var radios = document.getElementsByName("URL");
+	if(radios[0].checked){
+		//auto
 		return true;
 	}
-	else
-	{
-		alert('Please input letters only.');
-		return false;
+	else{
+		var short = document.forms["thisForm"]["short"];
+		var letters = /^[A-Za-z]+$/;
+		if(short.value.match(letters))
+		{
+			return true;
+		}
+		else
+		{
+			alert('Please input letters only.');
+			return false;
+		}
 	}
+	return true;
 };
 
 function validUsername()
