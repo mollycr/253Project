@@ -1,42 +1,44 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <link rel="stylesheet" type="text/css" href="static/css/proj-1-main.css">        
-        <title>Link Shortener</title>
-    </head>
-    <body>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="static/css/main.css">
+		<title>Link Shortener</title>
+	</head>
+	<body>
 
-	<img src="static/header1.jpg" width="1280" height="100"/>
-    <br><br><br><br><br>
-    <!--<h1>Welcome to our link shortener.</h1> -->
+		<img src="static/header1.jpg" width="1280" height="100"/>
+		<br><br><br><br><br>
+		<!--<h1>Welcome to our link shortener.</h1> -->
 		{% if USERNAME %}
-		<p> Welcome, <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/myAccount"> {{USERNAME}} </a> <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a></p>
-{% else %}
-		<div id="createLogin" >
-	<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/create_account">Create Account</a><br>
-			<form method="POST" action="login" >
-				<input type="text" id="username" name="username" placeholder="username"/> <br>
-				<input type="password" id="password" name="password" placeholder="password"/> <br><br>
-				<input type="submit" value="Log in"/>
-			</form>
-			
-			{% if statusMessage %}
-				<p>{{statusMessage}}</p>
-			{% endif %}
-		</div>
+			<p> Welcome, <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/myAccount"> {{USERNAME}} </a> <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a></p>
+		{% else %}
+			<div id="createLogin" >
+				<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/create_account">Create Account</a><br>
+				<form method="POST" action="login" >
+					<input type="text" id="username" name="username" placeholder="username"/> <br>
+					<input type="password" id="password" name="password" placeholder="password"/> <br><br>
+					<input type="submit" value="Log in"/>
+				</form>
+			</div>
 		{% endif %}
-	    <div class="links">
-        	<form method="POST" action="shorts" name="thisForm">
-            	<div>
-				<label for="long">Enter the link to be shortened in the long field:</label><br>
-                    <input type="text" id="long" name="long" style="width:50%"> 	
+
+		{% if statusMessage %}
+			<p>{{statusMessage}}</p>
+		{% endif %}
+
+		<div class="links">
+			<form method="POST" action="shorts" name="thisForm">
+				<div>
+					<label for="long">Enter the link to be shortened in the long field:</label><br>
+					<input type="text" id="long" name="long" style="width:50%"> 	
 				</div>
+<<<<<<< HEAD
 			<br>
                 <div>
 				
-				<input type="radio" name="URL" value="autoCreate" checked="checked">automatically create URL <br>
-				<input type="radio" name="URL" value="specify">shorten URL to
+				<input type="radio" id="shortenMethod"  name="shortenMethod" value="autoCreate" checked="checked">automatically create URL <br>
+				<input type="radio" id="shortenMethod"  name="shortenMethod" value="specify">shorten URL to
 				 <input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only">
 				 
                 
@@ -50,7 +52,9 @@
             	{{ shortURL }}
             	</div>
             	{% endif %}
-			<br><br>
+			<br>
+		{{statusMessage}}
+		<br>
             <div id="credits">
             
             <table>
@@ -65,4 +69,33 @@
 			
             <script src="static/letter.js"></script>
     </body>
+=======
+				<br>
+				<div>
+					<input type="radio" name="URL" value="autoCreate" checked="checked">automatically create URL <br>
+					<input type="radio" name="URL" value="specify">shorten URL to
+					<input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only">
+				</div>
+				<input type="submit" onClick="return allLetter()" value="Shorten!">
+			</form>
+			{% if shortURL %}
+				Here's your new short URL:
+				<div id="new_url">
+					{{ shortURL }}
+				</div>
+			{% endif %}
+			<br><br>
+			<div id="credits">
+				<table>
+					<tr><td>Brought to you by:</td></tr>
+					<tr><td>Molly</td></tr>
+					<tr><td>Sandra</td></tr>
+					<tr><td>Sabina</td></tr>
+					<tr><td>Robyn</td></tr>
+				</table>
+			</div>
+		</div>
+		<script src="static/letter.js"></script>
+	</body>
+>>>>>>> b6cb71c387f92e6afd6acd9e9c756a4d70961ecf
 </html> 
