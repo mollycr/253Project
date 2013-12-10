@@ -8,7 +8,7 @@ import hashlib
 import sqlite3
 import random
 import string
-from flask import Flask,request, session, escape, redirect
+from flask import Flask,request, session, escape, redirect, jsonify
 import bcrypt
 
 
@@ -117,10 +117,9 @@ def logout():
 
 @app.route('/myAccount')
 def myAccount():
-	#Insert html generation here
-
 	#generate the starting html
-	html = '''<form id="deleteLinks" action="delete" method="post">
+	html = '''<form id="deleteLinks" action="update" method="post">
+					<input type="hidden" name="shorts" value="%(allShorts)s"/>
 					<table id="links">
 						<tr>
 							<th>Long url</th>
@@ -133,7 +132,6 @@ def myAccount():
 						</tr>
 				'''
 	tableEnd = '</table> <input type="submit" value="Delete selected"/> </form>'
-	#y'all motherfuckers need IDs
 	rowTemplate = '''
 					<tr>
 						<td> %(long)s </td>
@@ -143,35 +141,14 @@ def myAccount():
 						<td> %(timestamp)s </td>
 						<td> <input type="checkbox" name="delete" value="%(short)s"/> </td>
 						<td>
-							<div id="nestedform%(x)d">
-								<input type="text" name="tag" id="formid%(x)d" placeholder="tag1 tag2"/>
-								<input type="hidden" name="short" id="shortid%(x)d" value="%(short)s"/>
-								<input type="button" id="buttonid%(x)d" value="Add tag(s)"/>
+							<div name="nestedform">
+								<input type="text" name="%(short)s" placeholder="tag1 tag2"/>
+								<input type="submit" value="Add tag(s)"/>
 							</div>
 						</td>
 					</tr>
 					'''
 
-	jqueryTemplate0 = '''
-							jQuery('#buttonid%(x)d').click( submit_form%(x)d );
-							jQuery('#nestedform%(x)d').find('input').keydown(keypressed);
-					'''
-	jqueryTemplate1 = '''
-						function submit_form%(x)d( event ) {
-							var values = new Array;
-							event.preventDefault;
-							values[0] = jQuery('#shortid%(x)d').attr('value');
-							values[1] = jQuery('#formid%(x)d').attr('value');
-							if (values[0]) {
-								do_submit(values);
-							} else {
-								return false;
-							}
-							return false;
-						}
-					'''
-	jquery0 = ""
-	jquery1 = ""
 	#get all the user's links from the database:
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
@@ -182,6 +159,8 @@ def myAccount():
 	#row is a... list? array? whatever of all the values
 
 	x = 0
+	tempHtml = ""
+	shorts = ""
 
 	while row is not None:
 	#for every link in that table:
@@ -197,54 +176,40 @@ def myAccount():
 			 tags += tag[0]
 		#add all the information into the template
 		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags, "x" : x}
-		jrow0 = jqueryTemplate0 % {"x" : x}
-		jrow1 = jqueryTemplate1 % {"x" : x}
+		shorts += (shortURL + " ")
 		#add the template to the main
-		html += row
-		jquery0 += jrow0
-		jquery1 += jrow1
+		tempHtml += row
 		row = db.fetchone()
 		x += 1
-	html += tableEnd
+	finalhtml = html%{"allShorts": shorts} + tempHtml + tableEnd
 	conn.commit()
 	conn.close()
-	return flask.render_template('my_account.html',USER=user,LinkTable=html,jquery0=jquery0,jquery1=jquery1)
+	return flask.render_template('my_account.html',USER=user,LinkTable=finalhtml)
 
-@app.route('/tag', methods=['POST'])
-def tag():
-	print "here"
-	conn=sqlite3.connect('cmap.db')
-	db=conn.cursor()
-	#get the tag(s) to add and the short
-	#TODO this line doesn't work
-	result = request.json["vals"]
-	#['short', 'tag tag tag']
-	short = result[0]
-	tags = result[1]
-	tags = string.split(tags)
-	print tags
-
-	#put it in the database
-	for tag in tags:
-		db.execute("INSERT INTO Tags(tag, short) VALUES(?, ?)", (tag, short))
-
-	#close it out
-	conn.commit()
-	conn.close()
-	return myAccount()
-
-@app.route('/delete', methods=['POST'])
-def delete():
-	#delete the selected rows from the table
-	#TODO test
+@app.route('/update', methods=['POST'])
+def update():
+	#fake two forms: either deleting or adding tags
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
 
+	shorts = request.form["shorts"]
+	
+	#TODO: not all of these shorts will have data.
+	# how to figure out whether or not there's data in the field before we do things, or at least have it not die on us
+
+	shorts = string.split(shorts)
+	for short in shorts:
+		tags = request.form[short]
+		tags = string.split(tags)
+		for tag in tags:
+			db.execute("INSERT INTO Tags(tag, short) VALUES(?, ?)", (tag, short))
+
+	#TODO: this might be empty, but I don't know if this will die if it is
 	toDelete = request.form.getlist("delete")
+	print delete
 	for short in toDelete:
 		db.execute("DELETE FROM Urls WHERE short=?", (short,))
 
-	conn.commit()
 	conn.close()
 	return myAccount()
 

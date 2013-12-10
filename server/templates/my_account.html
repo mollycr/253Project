@@ -14,29 +14,6 @@
 			{{LinkTable|safe}}
 		</div>
 		<script type="text/javascript" src="static/jquery.js"></script>
-		<!--Stolen from http://blog.avirtualhome.com/how-to-create-nested-forms/-->
-		<script type="text/javascript">	
-			jQuery(document).ready(function() {
-				{{jquery0|safe}}
-			}
-			);
-			{{jquery1|safe}}
-			function keypressed( event ) {
-				var charcode = (event.which) ? event.which : window.event.keyCode ;
-				if ( charcode == 13 ) {
-					return submit_search( event );
-				}
-				return true;
-			}
-
-			function do_submit(submit_values) {
-				//TODO this isn't right
-				jQuery.post(
-					"http://people.ischool.berkeley.edu/~mrobison/server/tag",//this might not work
-					{'vals': submit_values }
-				);
-			}
-		</script>
         <script src="table-sort.js"></script>
     </body>
 </html> 
