@@ -118,7 +118,6 @@ def logout():
 @app.route('/myAccount')
 def myAccount():
 	#Insert html generation here
-	#TODO test
 
 	#generate the starting html
 	html = '''<form id="deleteLinks" action="delete" method="post">
