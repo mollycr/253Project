@@ -14,12 +14,16 @@ function allLetter()
 	//var radios = document.getElementsByName("URL");
 	//if(radios[0].checked){
 	
-	if($("#autoCreate:checked").val()=="autoCreate"){
-		//auto
+	if ($("#long").val()==""||$("#long").val()==null){
+		alert("Please specify a URL to shorten");
+		return false;	
+	}
+	else if($("#autoCreate:checked").val()=="autoCreate"){
+		//autocreate is checked
 		return true;
 	}
 	else{ 
-		//make their input the short URL
+		//specify is checked. make sure they have inputted a short URL
 		//var short = document.forms["thisForm"]["short"];
 		var short=$("#short").val();
 		var letters = /^[A-Za-z]+$/;
