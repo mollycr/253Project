@@ -122,17 +122,19 @@ def myAccount():
 
 	#generate the starting html
 	html = '''<form id="deleteLinks" action="delete" method="post">
-					<table id="links">
-						<tr>
-							<th>Long url</th>
-							<th>Short url</th>
-							<th>Number of visits</th>
-							<th>Tags</th>
-							<th>Created</th>
-							<th>Delete?</th>
-						</tr>
+					<table id="links" class="tablesorter">
+						<thead>
+							<tr>
+								<th>Long url</th>
+								<th>Short url</th>
+								<th>Number of visits</th>
+								<th>Tags</th>
+								<th>Created</th>
+								<th>Delete?</th>											</tr>
+						</thead>
+						<tbody>
 				'''
-	tableEnd = '</table> <input type="submit" value="Delete selected"/> </form>'
+	tableEnd = '</tbody></table> <input type="submit" value="Delete selected"/> </form>'
 	rowTemplate = '''
 					<tr>
 						<td> %(long)s </td>
