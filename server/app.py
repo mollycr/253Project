@@ -8,7 +8,7 @@ import hashlib
 import sqlite3
 import random
 import string
-from flask import Flask,request, session, escape, redirect
+from flask import Flask,request, session, escape, redirect, jsonify
 import bcrypt
 
 
@@ -83,7 +83,7 @@ def create_account():
 		db.execute("UPDATE Urls SET username=? WHERE username=?", (username, request.remote_addr)) #can't hurt
 		#insert new user's values into cmap
 		hashed = bcrypt.hashpw(password, bcrypt.gensalt())
-		db.execute('''INSERT INTO User VALUES(?,?,?)''',(username,email,hashed))
+		db.execute('''INSERT INTO User(username, email, hash) VALUES(?,?,?)''',(username,email,hashed))
 	#commits and close db connection
 	conn.commit()
 	conn.close()
@@ -117,24 +117,21 @@ def logout():
 
 @app.route('/myAccount')
 def myAccount():
-	#Insert html generation here
-	#TODO test
-
 	#generate the starting html
-	html = '''<form id="deleteLinks" action="delete" method="post">
-					<table id="links" class="tablesorter">
-						<thead>
-							<tr>
-								<th>Long url</th>
-								<th>Short url</th>
-								<th>Number of visits</th>
-								<th>Tags</th>
-								<th>Created</th>
-								<th>Delete?</th>											</tr>
-						</thead>
-						<tbody>
+	html = '''<form id="deleteLinks" action="update" method="post">
+					<input type="hidden" name="shorts" value="%(allShorts)s"/>
+					<table id="links">
+						<tr>
+							<th>Long url</th>
+							<th>Short url</th>
+							<th>Number of visits</th>
+							<th>Tags</th>
+							<th>Created</th>
+							<th>Delete?</th>
+							<th>Add tags</th>
+						</tr>
 				'''
-	tableEnd = '</tbody></table> <input type="submit" value="Delete selected"/> </form>'
+	tableEnd = '</table> <input type="submit" value="Delete selected"/> </form>'
 	rowTemplate = '''
 					<tr>
 						<td> %(long)s </td>
@@ -143,8 +140,15 @@ def myAccount():
 						<td> %(tags)s </td>
 						<td> %(timestamp)s </td>
 						<td> <input type="checkbox" name="delete" value="%(short)s"/> </td>
+						<td>
+							<div name="nestedform">
+								<input type="text" name="%(short)s" placeholder="tag1 tag2"/>
+								<input type="submit" value="Add tag(s)"/>
+							</div>
+						</td>
 					</tr>
 					'''
+
 	#get all the user's links from the database:
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
@@ -153,6 +157,10 @@ def myAccount():
 	db.execute("SELECT url, short, timesVisited, currentTime FROM Urls WHERE username=?", (username,))
 	row = db.fetchone()
 	#row is a... list? array? whatever of all the values
+
+	x = 0
+	tempHtml = ""
+	shorts = ""
 
 	while row is not None:
 	#for every link in that table:
@@ -167,28 +175,41 @@ def myAccount():
 		for tag in tagsList:
 			 tags += tag[0]
 		#add all the information into the template
-		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags}
+		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags, "x" : x}
+		shorts += (shortURL + " ")
 		#add the template to the main
-		html += row
+		tempHtml += row
 		row = db.fetchone()
-
-	html += tableEnd
+		x += 1
+	finalhtml = html%{"allShorts": shorts} + tempHtml + tableEnd
 	conn.commit()
 	conn.close()
-	return flask.render_template('my_account.html',USER=user,LinkTable=html)
+	return flask.render_template('my_account.html',USER=user,LinkTable=finalhtml)
 
-@app.route('/delete', methods=['POST'])
-def delete():
-	#delete the selected rows from the table
-	#TODO test
+@app.route('/update', methods=['POST'])
+def update():
+	#fake two forms: either deleting or adding tags
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
 
+	shorts = request.form["shorts"]
+	
+	#TODO: not all of these shorts will have data.
+	# how to figure out whether or not there's data in the field before we do things, or at least have it not die on us
+
+	shorts = string.split(shorts)
+	for short in shorts:
+		tags = request.form[short]
+		tags = string.split(tags)
+		for tag in tags:
+			db.execute("INSERT INTO Tags(tag, short) VALUES(?, ?)", (tag, short))
+
+	#TODO: this might be empty, but I don't know if this will die if it is
 	toDelete = request.form.getlist("delete")
+	print delete
 	for short in toDelete:
 		db.execute("DELETE FROM Urls WHERE short=?", (short,))
 
-	conn.commit()
 	conn.close()
 	return myAccount()
 
@@ -230,7 +251,7 @@ def shorts():
 			# if it is, and the user specified the short, return error
 			return index("That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
-	db.execute("INSERT INTO Urls VALUES(?,?,?,?,datetime('now','localtime'))",(longURL,shortURL,0,username))
+	db.execute("INSERT INTO Urls(url, short, username, timesVisited, currentTime) VALUES(?,?,?,?,datetime('now','localtime'))",(longURL,shortURL,username,0))
 	conn.commit()
 	conn.close()
 	return index(url=begin+shortURL)

@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link rel="stylesheet" type="text/css" href="static/css/main.css">        
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<title>Link Shortener</title>
 	</head>
 	<body>
@@ -35,9 +36,9 @@
 				</div>
 				<br>
 				<div>
-					<input type="radio" name="URL" value="autoCreate" checked="checked">automatically create URL <br>
-					<input type="radio" name="URL" value="specify">shorten URL to
-					<input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only">
+					<input type="radio" id="autoCreate" name="URL" value="autoCreate" checked="checked">automatically create URL <br>
+					<input type="radio" id="specify" name="URL" value="specify">shorten URL to
+					<input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only" disabled="disabled">
 				</div>
 				<input type="submit" onClick="return allLetter()" value="Shorten!">
 			</form>
