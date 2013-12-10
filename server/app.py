@@ -122,29 +122,31 @@ def myAccount():
 
 	#generate the starting html
 	html = '''<form id="deleteLinks" action="delete" method="post">
-						<table id="links">
-							<th>
-								<td>Long url</td>
-								<td>Short url</td>
-								<td>Number of visits</td>
-								<td>Tags</td>
-								<td>Created</td>
-								<td>Delete?</td>
-							</th>
+					<table id="links">
+						<tr>
+							<th>Long url</th>
+							<th>Short url</th>
+							<th>Number of visits</th>
+							<th>Tags</th>
+							<th>Created</th>
+							<th>Delete?</th>
+						</tr>
 				'''
 	tableEnd = '</table> <input type="submit" value="Delete selected"/> </form>'
-	rowTemplate = '''<tr>
-						<td> %(long) </td>
-						<td> %(short) </td>
-						<td> %(visits) </td>
-						<td> %(tags) </td>
-						<td> %(timestamp) </td>
-						<td> <input type="checkbox" name="delete" value="%(short)"/> </td
+	rowTemplate = '''
+					<tr>
+						<td> %(long)s </td>
+						<td> %(short)s </td>
+						<td> %(visits)d </td>
+						<td> %(tags)s </td>
+						<td> %(timestamp)s </td>
+						<td> <input type="checkbox" name="delete" value="%(short)s"/> </td>
 					</tr>
-				'''
+					'''
 	#get all the user's links from the database:
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
+	db2=conn.cursor()
 	username = session['username']
 	db.execute("SELECT url, short, timesVisited, currentTime FROM Urls WHERE username=?", (username,))
 	row = db.fetchone()
@@ -158,8 +160,8 @@ def myAccount():
 		timestamp = row[3]
 		tags = ""
 		#get the tags for that link
-		db.execute("SELECT tag FROM Tags WHERE short=?", (shortURL,))
-		tagsList = db.fetchall()
+		db2.execute("SELECT tag FROM Tags WHERE short=?", (shortURL,))
+		tagsList = db2.fetchall()
 		for tag in tagsList:
 			 tags += tag[0]
 		#add all the information into the template
