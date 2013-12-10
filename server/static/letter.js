@@ -5,6 +5,8 @@ $("#specify").click(function(){
 //disables input into shortURL textbox when autoCreate radio is selected
 $("#autoCreate").click(function(){
 	$("#short").prop("disabled","disabled");
+	//clears textbox input if somethig was entered
+	$("#short").val("");
 });
 
 function allLetter()
