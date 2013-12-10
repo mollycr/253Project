@@ -1,23 +1,34 @@
 //enables input into shortURL textbox when shorten URL radio is selected
 $("#specify").click(function(){
         $("#short").removeAttr("disabled");
-})
+});
 //disables input into shortURL textbox when autoCreate radio is selected
 $("#autoCreate").click(function(){
 	$("#short").prop("disabled","disabled");
-})
+});
 
 function allLetter()
 {
-	var radios = document.getElementsByName("URL");
-	if(radios[0].checked){
+	//var short=$("#short").val();
+	//alert($("#autoCreate:checked").val());
+	//var radios = document.getElementsByName("URL");
+	//if(radios[0].checked){
+	
+	if($("#autoCreate:checked").val()=="autoCreate"){
 		//auto
-		return true;
+		alert('checked');
+		return false;
 	}
-	else{
-		var short = document.forms["thisForm"]["short"];
+	else{ 
+		//make their input the short URL
+		//var short = document.forms["thisForm"]["short"];
+		var short=$("#short").val();
 		var letters = /^[A-Za-z]+$/;
-		if(short.value.match(letters))
+		if (short==""||short==null){
+			alert("Please input a short URL");
+			return false;
+		}
+		else if(short.match(letters))
 		{
 			return true;
 		}
@@ -27,8 +38,7 @@ function allLetter()
 			return false;
 		}
 	}
-	return true;
-};
+}
 
 function validUsername()
 {//assuming for the sake of prototyping that we want
