@@ -7,8 +7,7 @@
 		<title>Link Shortener</title>
 	</head>
 	<body>
-
-		<img src="static/header1.jpg" width="1280" height="100"/>
+		<div id="header" height=100px ><span id="title">brevitas</span></div>
 		<br><br><br><br><br>
 		<!--<h1>Welcome to our link shortener.</h1> -->
 		{% if USERNAME %}
@@ -37,8 +36,8 @@
 				<br>
 				<div>
 					<input type="radio" id="autoCreate" name="URL" value="autoCreate" checked="checked">automatically create URL <br>
-					<input type="radio" id="specify" name="URL" value="specify">shorten URL to
-					<input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only" disabled="disabled">
+					<input type="radio" id="specify" name="URL" value="specify" checked="">shorten URL to
+					<input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only">
 				</div>
 				<input type="submit" onClick="return allLetter()" value="Shorten!">
 			</form>
