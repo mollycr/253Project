@@ -83,7 +83,7 @@ def create_account():
 		db.execute("UPDATE Urls SET username=? WHERE username=?", (username, request.remote_addr)) #can't hurt
 		#insert new user's values into cmap
 		hashed = bcrypt.hashpw(password, bcrypt.gensalt())
-		db.execute('''INSERT INTO User VALUES(?,?,?)''',(username,email,hashed))
+		db.execute('''INSERT INTO User(username, email, hash) VALUES(?,?,?)''',(username,email,hashed))
 	#commits and close db connection
 	conn.commit()
 	conn.close()
@@ -130,9 +130,11 @@ def myAccount():
 							<th>Tags</th>
 							<th>Created</th>
 							<th>Delete?</th>
+							<th>Add tags</th>
 						</tr>
 				'''
 	tableEnd = '</table> <input type="submit" value="Delete selected"/> </form>'
+	#y'all motherfuckers need IDs
 	rowTemplate = '''
 					<tr>
 						<td> %(long)s </td>
@@ -141,8 +143,36 @@ def myAccount():
 						<td> %(tags)s </td>
 						<td> %(timestamp)s </td>
 						<td> <input type="checkbox" name="delete" value="%(short)s"/> </td>
+						<td>
+							<div id="nestedform%(x)d">
+								<input type="text" name="tag" id="formid%(x)d" placeholder="tag1 tag2"/>
+								<input type="hidden" name="short" id="shortid%(x)d" value="%(short)s"/>
+								<input type="button" id="buttonid%(x)d" value="Add tag(s)"/>
+							</div>
+						</td>
 					</tr>
 					'''
+
+	jqueryTemplate0 = '''
+							jQuery('#buttonid%(x)d').click( submit_form%(x)d );
+							jQuery('#nestedform%(x)d').find('input').keydown(keypressed);
+					'''
+	jqueryTemplate1 = '''
+						function submit_form%(x)d( event ) {
+							var values = new Array;
+							event.preventDefault;
+							values[0] = jQuery('#shortid%(x)d').attr('value');
+							values[1] = jQuery('#formid%(x)d').attr('value');
+							if (values[0]) {
+								do_submit(values);
+							} else {
+								return false;
+							}
+							return false;
+						}
+					'''
+	jquery0 = ""
+	jquery1 = ""
 	#get all the user's links from the database:
 	conn=sqlite3.connect('cmap.db')
 	db=conn.cursor()
@@ -151,6 +181,8 @@ def myAccount():
 	db.execute("SELECT url, short, timesVisited, currentTime FROM Urls WHERE username=?", (username,))
 	row = db.fetchone()
 	#row is a... list? array? whatever of all the values
+
+	x = 0
 
 	while row is not None:
 	#for every link in that table:
@@ -165,15 +197,42 @@ def myAccount():
 		for tag in tagsList:
 			 tags += tag[0]
 		#add all the information into the template
-		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags}
+		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags, "x" : x}
+		jrow0 = jqueryTemplate0 % {"x" : x}
+		jrow1 = jqueryTemplate1 % {"x" : x}
 		#add the template to the main
 		html += row
+		jquery0 += jrow0
+		jquery1 += jrow1
 		row = db.fetchone()
-
+		x += 1
 	html += tableEnd
 	conn.commit()
 	conn.close()
-	return flask.render_template('my_account.html',USER=user,LinkTable=html)
+	return flask.render_template('my_account.html',USER=user,LinkTable=html,jquery0=jquery0,jquery1=jquery1)
+
+@app.route('/tag', methods=['POST'])
+def tag():
+	print "here"
+	conn=sqlite3.connect('cmap.db')
+	db=conn.cursor()
+	#get the tag(s) to add and the short
+	#TODO this line doesn't work
+	result = request.json["vals"]
+	#['short', 'tag tag tag']
+	short = result[0]
+	tags = result[1]
+	tags = string.split(tags)
+	print tags
+
+	#put it in the database
+	for tag in tags:
+		db.execute("INSERT INTO Tags(tag, short) VALUES(?, ?)", (tag, short))
+
+	#close it out
+	conn.commit()
+	conn.close()
+	return myAccount()
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -228,7 +287,7 @@ def shorts():
 			# if it is, and the user specified the short, return error
 			return index("That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
-	db.execute("INSERT INTO Urls VALUES(?,?,?,?,datetime('now','localtime'))",(longURL,shortURL,0,username))
+	db.execute("INSERT INTO Urls(url, short, username, timesVisited, currentTime) VALUES(?,?,?,?,datetime('now','localtime'))",(longURL,shortURL,username,0))
 	conn.commit()
 	conn.close()
 	return index(url=begin+shortURL)

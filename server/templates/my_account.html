@@ -1,18 +1,41 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <link rel="stylesheet" type="text/css" href="static/css/main.css">        
-                
-        <title>My Account</title>
-    </head>
-    <body>
-        <h1>My Account Details</h1>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="static/css/main.css">        
+
+		<title>My Account</title>
+	</head>
+	<body>
+		<h1>My Account Details</h1>
 		<a href="index">Home</a>
-        <br><br>
-        <div id="links">
+		<br><br>
+		<div id="links">
 			{{LinkTable|safe}}
-        </div>
-        <script src="_____.js"></script>
-    </body>
+		</div>
+		<script type="text/javascript" src="static/jquery.js"></script>
+		<!--Stolen from http://blog.avirtualhome.com/how-to-create-nested-forms/-->
+		<script type="text/javascript">	
+			jQuery(document).ready(function() {
+				{{jquery0|safe}}
+			}
+			);
+			{{jquery1|safe}}
+			function keypressed( event ) {
+				var charcode = (event.which) ? event.which : window.event.keyCode ;
+				if ( charcode == 13 ) {
+					return submit_search( event );
+				}
+				return true;
+			}
+
+			function do_submit(submit_values) {
+				//TODO this isn't right
+				jQuery.post(
+					"http://people.ischool.berkeley.edu/~mrobison/server/tag",//this might not work
+					{'vals': submit_values }
+				);
+			}
+		</script>
+	</body>
 </html> 
