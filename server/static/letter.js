@@ -16,8 +16,7 @@ function allLetter()
 	
 	if($("#autoCreate:checked").val()=="autoCreate"){
 		//auto
-		alert('checked');
-		return false;
+		return true;
 	}
 	else{ 
 		//make their input the short URL
