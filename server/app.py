@@ -101,6 +101,7 @@ def login():
 	hashed=db.fetchone()
 	if hashed is None:
 		return index("Incorrect username. Want to create an account?")
+	hashed = hashed[0]
 	if bcrypt.hashpw(password, hashed) != hashed:
 		return index("Incorrect password.")
 	#start a session
