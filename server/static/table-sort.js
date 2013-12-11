@@ -1,7 +1,1 @@
- 
-
-$(document).ready(function() 
-    { 
-        $("#deleteLinks").tablesorter(); 
-    } 
-); 
+$("#linksTable").stupidtable();
