@@ -8,31 +8,6 @@
 		<title> Create an account </title>
 		<link rel="stylesheet" type="text/css" href="static/css/main.css">
 
-		<script>
-			function test() {
-				var password = document.forms['frm']['password'];
-				var confirmpassword = document.forms['frm']['password2'];
-				if (password.value == "" || password.value==null){
-					alert ("Enter the password");
-					password.focus();
-					return false;
-				}
-				if ((password.value).length < 6 || (password.value).length > 20){
-					alert ("Password should be between 6 and 20 characters");
-					password.focus();
-					return false;
-				}
-				if (confirmpassword.value == " "){
-					alert ("Enter the Confirmation Password");
-					return false;
-				}
-				if (confirmpassword.value != password.value){
-					alert ("Password confirmation does not match.");
-					return false;
-				}
-				return true;
-			}
-		</script>
 	</head>
 	<body>
 		<h1>Create a free account</h1>
@@ -48,4 +23,45 @@
 			{% endif %}
 		</form> 
 	</body>	
+
+	<script>
+		function test() {
+				var password = document.forms['frm']['password'];
+				var confirmpassword = document.forms['frm']['password2'];
+				var email = document.forms['frm']['email'];
+				var username = document.forms['frm']['username'];
+				if (password.value == "" || password.value==null){
+					alert ("Enter the password");
+					password.focus();
+					return false;
+				}
+				if ((password.value).length < 8){
+					alert ("Password should be at least 8 characters & contain at least 1 number.");
+					password.focus();
+					return false;
+			///still need to add inclusion of number and uppercase///
+				}
+				if (password.value == email.value ){
+					alert ("Your password cannot be the same as email!");
+					return false;
+				}
+					
+				if(password.value == username.value){
+					alert ("Your password cannot be the same as your username!");
+					return false;
+			
+				}
+				if (confirmpassword.value == " "){
+					alert ("Enter the Confirmation Password");
+					return false;
+				}
+				if (confirmpassword.value != password.value){
+					alert ("Password confirmation does not match.");
+					return false;
+				}
+				return true;
+			}
+		</script>
+
+
 </html>
