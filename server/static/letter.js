@@ -1,14 +1,21 @@
-function selectCustom(){
-	//selects custom url when you click on the textbox
-	$("#specify").prop("checked", true);	
-}
-function clearCustom(){
-	//clears out the custom url field
-	$("#short").val('');
-}
+//enables input into shortURL textbox when shorten URL radio is selected
+$("#specify").click(function(){
+        $("#short").removeAttr("disabled");
+});
+//disables input into shortURL textbox when autoCreate radio is selected
+$("#autoCreate").click(function(){
+	$("#short").prop("disabled","disabled");
+	//clears textbox input if somethig was entered
+	$("#short").val("");
+});
 
-function allLetter()
-{	
+function allLetterNumber()
+{
+	//var short=$("#short").val();
+	//alert($("#autoCreate:checked").val());
+	//var radios = document.getElementsByName("URL");
+	//if(radios[0].checked){
+	
 	if ($("#long").val()==""||$("#long").val()==null){
 		alert("Please specify a URL to shorten");
 		return false;	
@@ -18,21 +25,21 @@ function allLetter()
 		return true;
 	}
 	else{ 
-		//specify is checked. make sure they have inputted a short URL
+		//If button checked for user choice, ensure they have input a short URL
 		//var short = document.forms["thisForm"]["short"];
 		var short=$("#short").val();
-		var alphanum = /^[A-Za-z0-9]+$/;
+		var letterNumber = /^[A-Za-z0-9]+$/;
 		if (short==""||short==null){
 			alert("Please input a short URL");
 			return false;
 		}
-		else if(short.match(alphanum))
+		else if(short.match(letterNumber))
 		{
 			return true;
 		}
 		else
 		{
-			alert('Please input letters and numbers only.');
+			alert('Please input letters or numbers only.');
 			return false;
 		}
 	}
@@ -59,14 +66,15 @@ function validPassword()
 	//make sure passwords match
 	var password = document.forms["create"]["password"];
 	if(password.value!=document.forms["create"]["password2"])
+	
 	{
 		alert("Passwords do not match");
 		return false;
 	}
 	//make sure it matches requirements
-	if(password.value.length < 6 || password.value.length > 20)
+	if(password.value.length < 8)
 	{
-		alert ("Password must be between 6 and 20 characters long.");
+		alert ("Password must be at least 8 characters long.");
 		return false;
 	}
 	return true;
