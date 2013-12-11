@@ -14,11 +14,12 @@
 		<h1>Create a free account</h1>
 		<p>to start saving, sharing, and discovering links</p>
 		<div>
-		<form name="create" method="post" action="create_account" onsubmit="return validPassword()">
-			<input type="text" name="username" placeholder="Username" size="30"/></br>
-			<input type="text" name="email" placeholder="Email address" size="30"/></br>
-			<input type="password" name="password" placeholder="Password" size="30"/></br>
-			<input type="password" name="password2" placeholder="Password again" size="30"/></br>
+		<form name="create" method="post" action="create_account" onsubmit="return validPasswordEmail()">
+			<input type="text" name="username" placeholder="Username" size="30"/><div id="usernameField" class="err">*Please enter a username. </div> </br>
+			<input type="text" name="email" placeholder="Email address" size="30"/><<div id="emailField" class="err">*Please enter a valid email. </div>/br>
+			<input type="password" name="password" placeholder="Password" size="30"/><div id="passwordField" class="err">*Password must be 8 characters long and contain at least one of the following: an uppercase letter, a lowercase letter, and a digit 0-9. </div></br>
+			<input type="password" name="password2" placeholder="Password again" size="30"/><div id="password2Field" class="err">*Password entries must match </div></br>
+		<div id="otherErrors">You cannot use your username or email as your password.</div>
 			<input type="submit" value="Create account!"/> 
 			{% if statusMessage %}
 				<p>{{statusMessage}}</p>
