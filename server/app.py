@@ -151,6 +151,7 @@ def myAccount():
 						</td>
 					</tr>
 					'''
+	tagTemplate = '<span class="tag">%(tag)s</span> '
 
 	#get all the user's links from the database:
 	conn=sqlite3.connect('cmap.db')
@@ -176,7 +177,7 @@ def myAccount():
 		db2.execute("SELECT tag FROM Tags WHERE short=?", (shortURL,))
 		tagsList = db2.fetchall()
 		for tag in tagsList:
-			 tags += tag[0] + " "
+			 tags += tagTemplate % {"tag" : tag[0]}
 		#add all the information into the template
 		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags, "x" : x}
 		shorts += (shortURL + " ")

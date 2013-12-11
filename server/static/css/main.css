@@ -1,44 +1,63 @@
 body {
-margin: 0;
-padding: 0;
-color: #000;
-font-size: 18px;
-font-family: verdana, arial, helvetica, sans-serif;
-color: white;
-background-size: 100%;
-background-image:url('canoe-dock.jpg');
-text-align: center;
+	margin: 0;
+	padding: 0;
+	font-size: 18px;
+	font-family: verdana, arial, helvetica, sans-serif;
+	color: white;
+	background-size: 100%;
+	background-attachment: fixed;
+	text-align: center;
+	color-stop (0%,rgba(255,255,255,0.7)));
+	background-color:#CCCC99;
 }
 
 h1{
-text-align: center;
-font: Calibri;
-color: #e48925;
+	position: fixed;
+	text-align: center;
+	vertical-align: center;
+	top: 0;
+	left: 50px;
+	z-index: 100;
+	font-family: Banks Script;
+	color: #990033;
+	font-size: 70px;
+	height: 100px;
+	width: 100px;
 }
 
-p 
-{
-font-size: 60%;
-color:#e42535;
+p{
+	font-size: 60%;
+	color:#e42535;
+	position: absolute;
+	right: 10px;
+	top: 50px;
 }
 
-table 
-{
-text-align: center;
-margin-left: auto;
-margin-right: auto;
+table {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-.links
-{
-background-color: rgba(0,0,0,0.5);
-text-align:center;
-color:white;
+#notHeader{
+	overflow: auto;
+	margin: 0 auto;
+	padding: 200px 0;
 }
 
-.credits
-{
-text-align: center;
-font-size: 12px;
+.credits{
+	font-size: 12pt;
 }
 
+#createLogin {
+	font-size: 12pt;
+	position: fixed;
+	top: 10px;
+	right: 80px;
+}
+
+img{
+	position: fixed;
+	left: 0;
+	top: 0;	
+}
