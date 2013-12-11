@@ -1,8 +1,10 @@
-//enables checks the radio button when you click in the textbox
-$("#short").click(function(){
-	$('#specify').prop('checked', true);
+//enables input into shortURL textbox when shorten URL radio is selected
+$("#specify").click(function(){
+        $("#short").removeAttr("disabled");
 });
+//disables input into shortURL textbox when autoCreate radio is selected
 $("#autoCreate").click(function(){
+	$("#short").prop("disabled","disabled");
 	//clears textbox input if somethig was entered
 	$("#short").val("");
 });
@@ -67,61 +69,84 @@ function validPasswordEmail()
 	var password = document.forms["create"]["password"];
 	var email = document.forms["create"]["email"];
 	var username = document.forms["create"]["username"];
-	var confirmpassword = document.forms["create"]["password2"]
+	var confirmpassword = document.forms["create"]["password2"];
+	var passwordError = document.forms["create"]["#passwordField"];
+	var emailError = document.forms["create"]["#emailField"];
+	var otherError = document.forms["create"]["#otherErrors"];
+	var usernameError = document.forms["create"]["#usernameField"]; 
+
+	var problem = False;
+	
+	//ensure password field filled in
+	if (password.value == "" || password.value==null){
+		console.log("reached password can't be empty check");
+		password.focus();
+		problem = True;
 
 	//ensure both passwords entered are a match
-	if(password.value!=document.forms["create"]["password2"])
+	if(password.value!=document.forms["create"]["password2"]){
+		console.log("reached password match validation");
+		problem = True;
 	
-	{
-		alert("Passwords do not match");
-		return false;
 	}
 	//make sure it matches length requirements//
 	if (password.value.length < 8)	{
-		alert ("Password must be at least 8 characters long.");
+		console.log("reached length req check");
 		password.focus();
-		return false;
+		problem = True;
+		passwordError.show;
+		
 	}
 	//ensure pw is not same as email//
 	if (password.value == email.value){
-		alert ("You cannot use your email as your password.");
-		return false;
+		console.log ("reached email-password check");
+		problem = True;
+		otherError.show;
 	}
 	//ensure pw is not same as username//
 	if (password.value == username.value) {
-		alert ("You cannot use your username as your password.");
-		return false;
+		console.log("reached username-password check");
+		problem = True;
+		otherError.show;
 	}
 	//Some code taken from http://www.the-art-of-web.com/javascript/validate-password///
 	//ensure pw includes lowercase character//
 	re = /[a-z]/;
 	if (!re.test(password.value)) {
-		alert ("Your password must contain at least one lowercase letter.");
+		console.log("reached a-z check");
 		password.focus();
-		return false;
+		problem = True;
+		passwordError.show;
 	}
 	//ensure pw includes digit//
 	re = /[0-9]/;
 	if (!re.test(password.value)) {
-		alert ("Your password must contain at least one number.");
+		console.log("reached digit validation");
 		password.focus();
-		return false;
+		problem = True
+		passwordError.show;
 	}
 	//ensure pw includes uppercase character//
 	re = /[A-Z]/;
 	if (!re.test(password.value)) {
-		alert ("Your password must contain at least one uppercase letter.");
+		console.log("reached A-Z check");
 		password.focus();
-		return false;
+		problem = True;
+		passwordError.show;
+
 	} 
 		
 	
 	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	if (reEmail.test(email.value) != True ) {
-		alert ("You must enter a valid email.");
+		console.log("reached email validation");
 		email.focus();
-		return false;
+		problem = True;
+		emailError.show;
+		
 	}
 	//if all conditions are met, this is a valid pw//
+
+	//javascript to display hidden values on create_account
 	return true;
 } 
