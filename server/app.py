@@ -119,19 +119,22 @@ def logout():
 def myAccount():
 	#generate the starting html
 	html = '''<form id="deleteLinks" action="update" method="post">
-					<input type="hidden" name="shorts" value="%(allShorts)s"/>
-					<table id="links">
-						<tr>
-							<th>Long url</th>
-							<th>Short url</th>
-							<th>Number of visits</th>
-							<th>Tags</th>
-							<th>Created</th>
-							<th>Delete?</th>
-							<th>Add tags</th>
-						</tr>
+				<input type="hidden" name="shorts" value="%(allShorts)s"/>
+				<table id="linksTable">
+					<thead>
+					<tr>
+						<th data-sort="string">Long url</th>
+						<th data-sort="string">Short url</th>
+						<th data-sort="int">Number of visits</th>
+						<th>Tags</th>
+						<th data-sort="string">Created</th>
+						<th>Delete?</th>
+						<th>Add tags</th>
+					</tr>
+					</thead>
+					<tbody>
 				'''
-	tableEnd = '</table> <input type="submit" value="Delete selected"/> </form>'
+	tableEnd = '</tbody></table> <input type="submit" value="Delete selected"/> </form>'
 	rowTemplate = '''
 					<tr>
 						<td> %(long)s </td>

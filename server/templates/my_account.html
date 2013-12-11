@@ -4,7 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link rel="stylesheet" type="text/css" href="static/css/main.css">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	    <script type="text/javascript" src="static/table-sort.js"></script>
+		<script src="static/stupidtable.min.js"></script>
         <title>My Account</title>
     </head>
 	<body>
@@ -14,7 +14,8 @@
 		<div id="links">
 			{{LinkTable|safe}}
         </div>
+		<script>
+			$("#linksTable").stupidtable();
+		</script>
 	</body>
-        <script src="static/table-sort.js"></script>
-	<script type="text/javascript" src="static/jquery.js"></script>
 </html> 
