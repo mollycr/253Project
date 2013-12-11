@@ -126,9 +126,9 @@ def myAccount():
 						<th data-sort="string">Long url</th>
 						<th data-sort="string">Short url</th>
 						<th data-sort="int">Number of visits</th>
-						<th>Tags</th>
 						<th data-sort="string">Created</th>
 						<th>Delete?</th>
+						<th>Tags</th>
 						<th>Add tags</th>
 					</tr>
 					</thead>
@@ -140,9 +140,9 @@ def myAccount():
 						<td> %(long)s </td>
 						<td> %(short)s </td>
 						<td> %(visits)d </td>
-						<td> %(tags)s </td>
 						<td> %(timestamp)s </td>
 						<td> <input type="checkbox" name="delete" value="%(short)s"/> </td>
+						<td> %(tags)s </td>
 						<td>
 							<div name="nestedform">
 								<input type="text" name="%(short)s" placeholder="tag1 tag2"/>
