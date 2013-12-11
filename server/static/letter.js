@@ -1,21 +1,14 @@
-//enables input into shortURL textbox when shorten URL radio is selected
-$("#specify").click(function(){
-        $("#short").removeAttr("disabled");
-});
-//disables input into shortURL textbox when autoCreate radio is selected
-$("#autoCreate").click(function(){
-	$("#short").prop("disabled","disabled");
-	//clears textbox input if somethig was entered
-	$("#short").val("");
-});
+function selectCustom(){
+	//selects custom url when you click on the textbox
+	$("#specify").prop("checked", true);	
+}
+function clearCustom(){
+	//clears out the custom url field
+	$("#short").val('');
+}
 
 function allLetter()
-{
-	//var short=$("#short").val();
-	//alert($("#autoCreate:checked").val());
-	//var radios = document.getElementsByName("URL");
-	//if(radios[0].checked){
-	
+{	
 	if ($("#long").val()==""||$("#long").val()==null){
 		alert("Please specify a URL to shorten");
 		return false;	
@@ -28,18 +21,18 @@ function allLetter()
 		//specify is checked. make sure they have inputted a short URL
 		//var short = document.forms["thisForm"]["short"];
 		var short=$("#short").val();
-		var letters = /^[A-Za-z]+$/;
+		var alphanum = /^[A-Za-z0-9]+$/;
 		if (short==""||short==null){
 			alert("Please input a short URL");
 			return false;
 		}
-		else if(short.match(letters))
+		else if(short.match(alphanum))
 		{
 			return true;
 		}
 		else
 		{
-			alert('Please input letters only.');
+			alert('Please input letters and numbers only.');
 			return false;
 		}
 	}
