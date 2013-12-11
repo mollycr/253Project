@@ -1,12 +1,15 @@
 //enables input into shortURL textbox when shorten URL radio is selected
-$("#specify").click(function(){
-        $("#short").removeAttr("disabled");
-});
+//$("#specify").click(function(){
+//        $("#short").removeAttr("disabled");
+//});
 //disables input into shortURL textbox when autoCreate radio is selected
 $("#autoCreate").click(function(){
-	$("#short").prop("disabled","disabled");
+	//$("#short").prop("disabled","disabled");
 	//clears textbox input if somethig was entered
 	$("#short").val("");
+});
+$("#short").click(function(){
+	alert("clicked");
 });
 
 function allLetter()
