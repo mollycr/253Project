@@ -145,6 +145,9 @@ function validPasswordEmail()
 		emailError.show;
 		
 	}
+	if (problem == True) {
+		return False;
+	}
 	//if all conditions are met, this is a valid pw//
 
 	//javascript to display hidden values on create_account
