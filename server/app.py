@@ -173,7 +173,7 @@ def myAccount():
 		db2.execute("SELECT tag FROM Tags WHERE short=?", (shortURL,))
 		tagsList = db2.fetchall()
 		for tag in tagsList:
-			 tags += tag[0]
+			 tags += tag[0] + " "
 		#add all the information into the template
 		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags, "x" : x}
 		shorts += (shortURL + " ")
@@ -193,23 +193,26 @@ def update():
 	db=conn.cursor()
 
 	shorts = request.form["shorts"]
-	
-	#TODO: not all of these shorts will have data.
-	# how to figure out whether or not there's data in the field before we do things, or at least have it not die on us
 
+	#TODO not all of these shorts have data
 	shorts = string.split(shorts)
 	for short in shorts:
-		tags = request.form[short]
-		tags = string.split(tags)
-		for tag in tags:
-			db.execute("INSERT INTO Tags(tag, short) VALUES(?, ?)", (tag, short))
+		if short in request.form:
+			print "HERE"
+			tags = request.form[short]
+			tags = string.split(tags)
+			for tag in tags:
+				db.execute("INSERT INTO Tags(tag, short) VALUES(?, ?)", (tag, short))
 
-	#TODO: this might be empty, but I don't know if this will die if it is
+	#TODO will this work if there's nothing?
 	toDelete = request.form.getlist("delete")
-	print delete
+	print toDelete
 	for short in toDelete:
+		print short
 		db.execute("DELETE FROM Urls WHERE short=?", (short,))
+		db.execute("DELETE FROM Tags WHERE short=?", (short,))
 
+	conn.commit()
 	conn.close()
 	return myAccount()
 
