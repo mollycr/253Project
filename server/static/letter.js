@@ -9,7 +9,7 @@ $("#autoCreate").click(function(){
 	$("#short").val("");
 });
 
-function allLetter()
+function allLetterNumber()
 {
 	//var short=$("#short").val();
 	//alert($("#autoCreate:checked").val());
@@ -25,21 +25,21 @@ function allLetter()
 		return true;
 	}
 	else{ 
-		//specify is checked. make sure they have inputted a short URL
+		//If button checked for user choice, ensure they have input a short URL
 		//var short = document.forms["thisForm"]["short"];
 		var short=$("#short").val();
-		var letters = /^[A-Za-z]+$/;
+		var letterNumber = /^[A-Za-z0-9]+$/;
 		if (short==""||short==null){
 			alert("Please input a short URL");
 			return false;
 		}
-		else if(short.match(letters))
+		else if(short.match(letterNumber))
 		{
 			return true;
 		}
 		else
 		{
-			alert('Please input letters only.');
+			alert('Please input letters or numbers only.');
 			return false;
 		}
 	}
