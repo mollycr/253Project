@@ -69,30 +69,36 @@ function validPasswordEmail()
 	var password = document.forms["create"]["password"];
 	var email = document.forms["create"]["email"];
 	var username = document.forms["create"]["username"];
-	var confirmpassword = document.forms["create"]["password2"];
+	var password2 = document.forms["create"]["password2"];
 	var passwordError = document.forms["create"]["#passwordField"];
 	var emailError = document.forms["create"]["#emailField"];
 	var otherError = document.forms["create"]["#otherErrors"];
 	var usernameError = document.forms["create"]["#usernameField"]; 
-
-	var problem = False;
+	var problem = false;
 	
 	//ensure password field filled in
 	if (password.value == "" || password.value==null){
 		console.log("reached password can't be empty check");
-		alert("empty password");
+		//alert("empty password");
 		//password.focus();//
-		problem = True;
+		//problem = true;
 		return false;
 		}
+	
+
 }
-/*
+
 	//ensure both passwords entered are a match
-	if(password.value!=document.forms["create"]["password2"]){
+	if(password.value != password2.value)
+	{
 		console.log("reached password match validation");
-		problem = True;
+		alert("passwords don't match!");
+		//problem = true;
+		return false;
+		
 	
 	}
+/*
 	//make sure it matches length requirements//
 	if (password.value.length < 8)	{
 		console.log("reached length req check");
