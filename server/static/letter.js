@@ -66,14 +66,15 @@ function validPassword()
 	//make sure passwords match
 	var password = document.forms["create"]["password"];
 	if(password.value!=document.forms["create"]["password2"])
+	
 	{
 		alert("Passwords do not match");
 		return false;
 	}
 	//make sure it matches requirements
-	if(password.value.length < 6 || password.value.length > 20)
+	if(password.value.length < 8)
 	{
-		alert ("Password must be between 6 and 20 characters long.");
+		alert ("Password must be at least 8 characters long.");
 		return false;
 	}
 	return true;

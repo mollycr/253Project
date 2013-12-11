@@ -12,7 +12,10 @@
 		<br><br><br><br><br>
 		<!--<h1>Welcome to our link shortener.</h1> -->
 		{% if USERNAME %}
-			<p> Welcome, <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/myAccount"> {{USERNAME}} </a> <a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a></p>
+			<p> Welcome, {{USERNAME}}!
+				<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/myAccount"> My account </a> 
+				<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a>
+			</p>
 		{% else %}
 			<div id="createLogin" >
 				<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/create_account">Create Account</a><br>
@@ -36,9 +39,9 @@
 				</div>
 				<br>
 				<div>
-					<input type="radio" id="autoCreate" name="URL" value="autoCreate" checked="checked">automatically create URL <br>
+					<input type="radio" id="autoCreate" name="URL" value="autoCreate" checked="checked" onClick="clearCustom()">automatically create URL <br>
 					<input type="radio" id="specify" name="URL" value="specify">shorten URL to
-					<input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only" disabled="disabled">
+					<input type="text" id="short" name="short" style="width:20%" placeholder="Letters and numbers" onclick="selectCustom()">
 				</div>
 				<input type="submit" onClick="return allLetter()" value="Shorten!">
 			</form>
