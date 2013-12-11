@@ -80,9 +80,13 @@ function validPasswordEmail()
 	//ensure password field filled in
 	if (password.value == "" || password.value==null){
 		console.log("reached password can't be empty check");
-		password.focus();
+		alert("empty password");
+		//password.focus();//
 		problem = True;
-
+		return false;
+		}
+}
+/*
 	//ensure both passwords entered are a match
 	if(password.value!=document.forms["create"]["password2"]){
 		console.log("reached password match validation");
@@ -145,11 +149,14 @@ function validPasswordEmail()
 		emailError.show;
 		
 	}
+
 	if (problem == True) {
-		return False;
+		return false;
 	}
+
 	//if all conditions are met, this is a valid pw//
 
 	//javascript to display hidden values on create_account
-	return true;
-} 
+	
+	return false;
+} */
