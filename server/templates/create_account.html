@@ -5,14 +5,16 @@
 		<meta charset="utf-8">
 		<meta name="description" content="create an account">
 		<meta name="keywords" content="account">
-		<title> Create an account </title>
 		<link rel="stylesheet" type="text/css" href="static/css/main.css">
+		<title> Create an account </title>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 	</head>
 	<body>
 		<h1>Create a free account</h1>
 		<p>to start saving, sharing, and discovering links</p>
-		<form name="frm" method="post" action="create_account" onsubmit="return test()">
+		<div>
+		<form name="create" method="post" action="create_account" onsubmit="return validPassword()">
 			<input type="text" name="username" placeholder="Username" size="30"/></br>
 			<input type="text" name="email" placeholder="Email address" size="30"/></br>
 			<input type="password" name="password" placeholder="Password" size="30"/></br>
@@ -21,21 +23,23 @@
 			{% if statusMessage %}
 				<p>{{statusMessage}}</p>
 			{% endif %}
-		</form> 
-	</body>	
+		</form>
+		</div> 	
+	<script src="static/letter.js">	</script>
+</body>	
 
-	<script>
-		function test() {
-				var password = document.forms['frm']['password'];
-				var confirmpassword = document.forms['frm']['password2'];
-				var email = document.forms['frm']['email'];
-				var username = document.forms['frm']['username'];
+	<!--- <script>
+		function validPassword() {
+				var password = document.forms['create']['password'];
+				var confirmpassword = document.forms['create']['password2'];
+				var email = document.forms['create']['email'];
+				var username = document.forms['create']['username'];
 				if (password.value == "" || password.value==null){
 					alert ("Enter the password");
 					password.focus();
 					return false;
 				}
-				if ((password.value).length < 8){
+				if ((password.value.length < 8){
 					alert ("Password should be at least 8 characters & contain at least 1 number.");
 					password.focus();
 					return false;
@@ -52,7 +56,7 @@
 			
 				}
 				if (confirmpassword.value == " "){
-					alert ("Enter the Confirmation Password");
+					alert ("Enter the your password again to ensure you've typed it correctly.");
 					return false;
 				}
 				if (confirmpassword.value != password.value){
@@ -62,6 +66,6 @@
 				return true;
 			}
 		</script>
-
+	-- >
 
 </html>
