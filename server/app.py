@@ -25,29 +25,54 @@ def sendToIndex():
 	return flask.redirect(url)
 
 @app.route('/index')
-def index(message='default', url='default'):
-	if message=='default':
-		if url=='default':
-			if 'username' in session:
-				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+def index(loginMessage = 'default', topMessage='default', url='default'):
+	if loginMessage=='default':
+		if topMessage=='default':
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+				else:
+					return flask.render_template('home.html',USER=user)
 			else:
-				return flask.render_template('home.html',USER=user)
+				if 'username' in session:
+					return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']),shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user,shortURL=url)
 		else:
-			if 'username' in session:
-				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']),shortURL=url)
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+				else:
+					return flask.render_template('home.html',USER=user, statusMessage=message)
 			else:
-				return flask.render_template('home.html',USER=user,shortURL=url)
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user, statusMessage=message, shortURL=url)
 	else:
-		if url=='default':
-			if 'username' in session:
-				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+		if topMessage=='default':
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html',lmessage = loginMessage,USER=user,USERNAME=escape(session['username']))
+				else:
+					return flask.render_template('home.html',lmessage = loginMessage,USER=user)
 			else:
-				return flask.render_template('home.html',USER=user, statusMessage=message)
+				if 'username' in session:
+					return flask.render_template('home.html',USER=user,lmessage = loginMessage,USERNAME=escape(session['username']),shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user,lmessage = loginMessage,shortURL=url)
 		else:
-			if 'username' in session:
-				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user,lmessage = loginMessage, USERNAME=escape(session['username']), statusMessage=message)
+				else:
+					return flask.render_template('home.html',USER=user,lmessage = loginMessage, statusMessage=message)
 			else:
-				return flask.render_template('home.html',USER=user, statusMessage=message, shortURL=url)
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user,lmessage = loginMessage, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user, statusMessage=message,lmessage = loginMessage, shortURL=url)
+
 
 @app.route('/create_account',methods=['GET'])
 #renders create account page before and after create account form is posted
@@ -256,7 +281,7 @@ def shorts():
 					flag = True
 		else:
 			# if it is, and the user specified the short, return error
-			return index("That short URL was already taken. Try again.")
+			return index(topMessage = "That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
 	db.execute("INSERT INTO Urls(url, short, username, timesVisited, currentTime) VALUES(?,?,?,?,datetime('now','localtime'))",(longURL,shortURL,username,0))
 	conn.commit()

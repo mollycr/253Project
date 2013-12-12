@@ -27,10 +27,13 @@
 						<input type="submit" value="Log in"/>
 					</form>
 				{% endif %}
+				{% if lmessage %}
+					<p class="message">{{lmessage}}</p>
+				{% endif %}
 			</div>
 
 			{% if statusMessage %}
-				<p>{{statusMessage}}</p>
+				<p class="message">{{statusMessage}}</p>
 			{% endif %}
 
 			<div class="links">
