@@ -131,27 +131,30 @@ function validPasswordEmail()
 		//problem = true;
 		//passwordError.show;
 		return false;	}
-}
-/*
+
 	//ensure pw includes digit//
 	re = /[0-9]/;
 	if (!re.test(password.value)) {
-		console.log("reached digit validation");
-		password.focus();
-		problem = True
-		passwordError.show;
+		alert("need a digit");
+	//console.log("reached digit validation");
+	//	password.focus();
+	//	problem = true
+//		passwordError.show;
+		return false;	
 	}
+
 	//ensure pw includes uppercase character//
 	re = /[A-Z]/;
 	if (!re.test(password.value)) {
+		alert("need an uppercase");
 		console.log("reached A-Z check");
-		password.focus();
-		problem = True;
-		passwordError.show;
-
+		//password.focus();
+		//problem = true;
+		//passwordError.show;
+		return false;
 	} 
-		
-	
+}	
+/*	
 	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	if (reEmail.test(email.value) != True ) {
 		console.log("reached email validation");
