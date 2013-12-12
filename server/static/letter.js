@@ -59,8 +59,6 @@ function validUsername()
 	}
 }
 
-
-
 function validPasswordEmail()
 {
 	//make sure passwords match//
@@ -77,90 +75,101 @@ function validPasswordEmail()
 	//ensure password field filled in
 	if (password.value == "" || password.value==null){
 		console.log("reached password can't be empty check");
-		//alert("empty password");
+		alert("empty password");
 		//password.focus();//
-		//problem = true;
-		return false;
-		}
-	
-
-}
-
-	//ensure both passwords entered are a match
-	if(password.value != password2.value)
-	{
-		console.log("reached password match validation");
-		alert("passwords don't match!");
-		//problem = true;
-		return false;
-		
-	
+		problem = true;
+	}		
+	alert("we can still alert");
+	if (email.value == "" || email.value ==null){
+		alert("empty email");
+		problem = true;	
 	}
-/*
+
+	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	if (reEmail.test(email.value) != true ) {
+		alert("bad email, sucker!");
+		//console.log("reached email validation");
+		//email.focus();
+		problem = true;
+		//emailError.show;
+	}
+
 	//make sure it matches length requirements//
 	if (password.value.length < 8)	{
-		console.log("reached length req check");
-		password.focus();
-		problem = True;
-		passwordError.show;
-		
+		alert("password must be 8 chars");
+		//console.log("reached length req check");
+		//password.focus();
+		problem = true;
+		//passwordError.show;
 	}
+
+	//ensure both passwords entered are a match
+	if (password.value != password2.value){
+	//	console.log("reached password match validation");
+		alert("passwords don't match!");
+		problem = true;
+	}	
+
 	//ensure pw is not same as email//
 	if (password.value == email.value){
+		alert("pw can't be email")
 		console.log ("reached email-password check");
-		problem = True;
-		otherError.show;
+		problem = true;
+		//otherError.show;
 	}
+
 	//ensure pw is not same as username//
 	if (password.value == username.value) {
-		console.log("reached username-password check");
-		problem = True;
-		otherError.show;
+		alert("pw can't be username!");
+	//	console.log("reached username-password check");
+		problem = true;
+//		otherError.show;
+	
 	}
+
 	//Some code taken from http://www.the-art-of-web.com/javascript/validate-password///
 	//ensure pw includes lowercase character//
 	re = /[a-z]/;
 	if (!re.test(password.value)) {
-		console.log("reached a-z check");
-		password.focus();
-		problem = True;
-		passwordError.show;
-	}
+		alert("need a lowercase");
+		//console.log("reached a-z check");
+		//password.focus();
+		problem = true;
+		//passwordError.show;
+		}
+
 	//ensure pw includes digit//
 	re = /[0-9]/;
 	if (!re.test(password.value)) {
-		console.log("reached digit validation");
-		password.focus();
-		problem = True
-		passwordError.show;
+		alert("need a digit");
+	//console.log("reached digit validation");
+	//	password.focus();
+		problem = true
+//		passwordError.show;
+		
 	}
+
 	//ensure pw includes uppercase character//
 	re = /[A-Z]/;
 	if (!re.test(password.value)) {
+		alert("need an uppercase");
 		console.log("reached A-Z check");
-		password.focus();
-		problem = True;
-		passwordError.show;
-
+		//password.focus();
+		problem = true;
+		//passwordError.show;
+		
 	} 
-		
 	
-	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-	if (reEmail.test(email.value) != True ) {
-		console.log("reached email validation");
-		email.focus();
-		problem = True;
-		emailError.show;
-		
-	}
 
-	if (problem == True) {
+	if (problem == true) {
 		return false;
 	}
+	else {
+		return true;
+	}	
 
 	//if all conditions are met, this is a valid pw//
 
 	//javascript to display hidden values on create_account
-	
-	return false;
-} */
+}
+

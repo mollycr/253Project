@@ -1,13 +1,12 @@
-
-dy {
-        font-size: 12pt;
-        font-family: verdana, arial, helvetica, sans-serif;
-        color: white;
-        background-size: 100%;
-        background-attachment: fixed;
-        text-align: center;
-        color-stop (0%,rgba(255,255,255,0.7)));
-        background-color:#CCCC99;
+body {
+	font-size: 12pt;
+	font-family: verdana, arial, helvetica, sans-serif;
+	color: #333;
+	background-size: 100%;
+	background-attachment: fixed;
+	text-align: center;
+	color-stop (0%,rgba(255,255,255,0.7)));
+	background-color:#CCCC99;
 }
 
 h1{
@@ -43,12 +42,26 @@ table {
         color: #555;
 }
 
+#newURL{
+	color: #990033;
+	font-size: 18pt;
+}
+
+.message{
+	color: #990033;
+}
+
 #createLogin {
         color: white;
         width: 250px;
         position: fixed;
         top: 10px;
         right: 80px;
+}
+
+#err {
+	color: #990033;
+	font-size: 10pt;
 }
 
 img{
