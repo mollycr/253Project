@@ -6,6 +6,7 @@
 		<meta name="description" content="create an account">
 		<meta name="keywords" content="account">
 		<link rel="stylesheet" type="text/css" href="static/css/main.css">
+		<link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
 		<title> Create an account </title>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
@@ -15,23 +16,24 @@
 			brevitas
 		</h1>
 		<img src="static/header.jpg" width="100%" height="140"/>
-		<br><br><br><br><br>
 
-		<h2>Create a free account</h2>
-		<p>to start saving, sharing, and discovering links</p>
-		<div>
-		<form name="create" method="post" action="create_account" onsubmit="return validPassword()">
-			<input type="text" name="username" placeholder="Username" size="30"/></br>
-			<input type="text" name="email" placeholder="Email address" size="30"/></br>
-			<input type="password" name="password" placeholder="Password" size="30"/></br>
-			<input type="password" name="password2" placeholder="Password again" size="30"/></br>
-			<input type="submit" value="Create account!"/> 
-			{% if statusMessage %}
-				<p>{{statusMessage}}</p>
-			{% endif %}
-		</form>
-		</div> 	
-	<script src="static/letter.js">	</script>
+		<div id="notHeader">
+			<h2>Create a free account</h2>
+			<p>to start saving, sharing, and discovering links</p>
+			<div>
+			<form name="create" method="post" action="create_account" onsubmit="return validPassword()">
+				<input type="text" name="username" placeholder="Username" size="30"/></br>
+				<input type="text" name="email" placeholder="Email address" size="30"/></br>
+				<input type="password" name="password" placeholder="Password" size="30"/></br>
+				<input type="password" name="password2" placeholder="Password again" size="30"/></br>
+				<input type="submit" value="Create account!"/> 
+				{% if statusMessage %}
+					<p>{{statusMessage}}</p>
+				{% endif %}
+			</form>
+			</div> 	
+		</div>
+		<script src="static/letter.js">	</script>
 </body>	
 
 	<!--- <script>

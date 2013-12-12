@@ -1,7 +1,5 @@
 body {
-	margin: 0;
-	padding: 0;
-	font-size: 18px;
+	font-size: 12pt;
 	font-family: verdana, arial, helvetica, sans-serif;
 	color: white;
 	background-size: 100%;
@@ -18,19 +16,15 @@ h1{
 	top: 0;
 	left: 50px;
 	z-index: 100;
-	font-family: Banks Script;
+	font-family: 'Poiret One', cursive;
 	color: #990033;
-	font-size: 70px;
+	font-size: 50pt;
 	height: 100px;
 	width: 100px;
 }
 
 p{
-	font-size: 60%;
 	color:#e42535;
-	position: absolute;
-	right: 10px;
-	top: 50px;
 }
 
 table {
@@ -42,15 +36,16 @@ table {
 #notHeader{
 	overflow: auto;
 	margin: 0 auto;
-	padding: 200px 0;
+	padding: 200px 0 0 0;
 }
 
 .credits{
-	font-size: 12pt;
+	color: #555;
 }
 
 #createLogin {
-	font-size: 12pt;
+	color: white;
+	width: 250px;
 	position: fixed;
 	top: 10px;
 	right: 80px;
