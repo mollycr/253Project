@@ -59,10 +59,13 @@ function validUsername()
 	}
 }
 
-
+/*Create_account JS*/
 
 function validPasswordEmail()
 {
+	$("#usernameError").show();
+	return false;
+/*
 	//make sure passwords match//
 	var password = document.forms["create"]["password"];
 	var email = document.forms["create"]["email"];
@@ -124,4 +127,6 @@ function validPasswordEmail()
 	}
 	//if all conditions are met, this is a valid pw//
 	return true;
+*/
+
 } 

@@ -15,11 +15,11 @@
 		<p>to start saving, sharing, and discovering links</p>
 		<div>
 		<form name="create" method="post" action="create_account" onsubmit="return validPassword()">
-			<input type="text" name="username" placeholder="Username" size="30"/></br>
-			<input type="text" name="email" placeholder="Email address" size="30"/></br>
-			<input type="password" name="password" placeholder="Password" size="30"/></br>
-			<input type="password" name="password2" placeholder="Password again" size="30"/></br>
-			<input type="submit" value="Create account!"/> 
+			Username: <input type="text" name="username" placeholder="Username" size="30"/><span id="usernameError">  *Please enter a Username</span></br>
+			Email: <input type="text" name="email" placeholder="Email address" size="30"/><span id="emailError"> *Please enter a valid email address</span></br>
+			Password: <input type="password" name="password" placeholder="Password" size="30"/><span id="passwordError"> *Password must be at least 8 characters long and include at least one lowercase letter, uppercase letter, and one number</span><span id="pwUsernameError"> *Password cannot be the same as username></span><span id="pwEmailError"> *Password cannot be the same as email</span></br>
+			Confirm Password: <input type="password" name="password2" placeholder="Confirm password" size="30"/><span id="confirmError"> *Passwords do not match</span></br>
+			<input type="submit" onClick="return validPasswordEmail()" value="Create account!"/> 
 			{% if statusMessage %}
 				<p>{{statusMessage}}</p>
 			{% endif %}

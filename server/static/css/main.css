@@ -42,3 +42,8 @@ text-align: center;
 font-size: 12px;
 }
 
+/*Create_account css*/
+#usernameError, #emailError, #passwordError, #pwUsernameError, #pwEmailError, #confirmError{
+display:none;
+}
+
