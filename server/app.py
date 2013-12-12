@@ -25,40 +25,65 @@ def sendToIndex():
 	return flask.redirect(url)
 
 @app.route('/index')
-def index(message='default', url='default'):
-	if message=='default':
-		if url=='default':
-			if 'username' in session:
-				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+def index(loginMessage = 'default', topMessage='default', url='default'):
+	if loginMessage=='default':
+		if topMessage=='default':
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']))
+				else:
+					return flask.render_template('home.html',USER=user)
 			else:
-				return flask.render_template('home.html',USER=user)
+				if 'username' in session:
+					return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']),shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user,shortURL=url)
 		else:
-			if 'username' in session:
-				return flask.render_template('home.html',USER=user,USERNAME=escape(session['username']),shortURL=url)
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+				else:
+					return flask.render_template('home.html',USER=user, statusMessage=message)
 			else:
-				return flask.render_template('home.html',USER=user,shortURL=url)
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user, statusMessage=message, shortURL=url)
 	else:
-		if url=='default':
-			if 'username' in session:
-				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message)
+		if topMessage=='default':
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html',lmessage = loginMessage,USER=user,USERNAME=escape(session['username']))
+				else:
+					return flask.render_template('home.html',lmessage = loginMessage,USER=user)
 			else:
-				return flask.render_template('home.html',USER=user, statusMessage=message)
+				if 'username' in session:
+					return flask.render_template('home.html',USER=user,lmessage = loginMessage,USERNAME=escape(session['username']),shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user,lmessage = loginMessage,shortURL=url)
 		else:
-			if 'username' in session:
-				return flask.render_template('home.html', USER=user, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+			if url=='default':
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user,lmessage = loginMessage, USERNAME=escape(session['username']), statusMessage=message)
+				else:
+					return flask.render_template('home.html',USER=user,lmessage = loginMessage, statusMessage=message)
 			else:
-				return flask.render_template('home.html',USER=user, statusMessage=message, shortURL=url)
+				if 'username' in session:
+					return flask.render_template('home.html', USER=user,lmessage = loginMessage, USERNAME=escape(session['username']), statusMessage=message, shortURL=url)
+				else:
+					return flask.render_template('home.html',USER=user, statusMessage=message,lmessage = loginMessage, shortURL=url)
+
 
 @app.route('/create_account',methods=['GET'])
 #renders create account page before and after create account form is posted
 def createAccountConfirm(message='default'):
 	if message!='default':
-		return flask.render_template('create_account.html',statusMessage=message)
+		return flask.render_template('create_account.html',USER=user, statusMessage=message)
 	else:
 		if 'username' in session:
-			return flask.render_template('create_account.html',statusMessage='Logged in as %s' % escape(session['username']))
+			return flask.render_template('create_account.html',USER=user, statusMessage='Logged in as %s' % escape(session['username']))
 		else:
-			return flask.render_template('create_account.html')
+			return flask.render_template('create_account.html', USER=user)
 
 @app.route('/create_account', methods=['POST'])
 def create_account():
@@ -73,11 +98,11 @@ def create_account():
 	#checks if username already in database, reloads page for user to try again
 	em=db.execute("SELECT email FROM User WHERE username=?", (username,)).fetchone()
 	if em is not None:
-		return flask.render_template('create_account.html', statusMessage="Username is already taken")
+		return flask.render_template('create_account.html', USER=user, statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
 	un=db.execute("SELECT username FROM User WHERE email=?", (email,)).fetchone()
 	if un is not None:
-		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
+		return flask.render_template('create_account.html',USER=user,statusMessage="There's already an account for this email")
 	else:
 		#check to see if we have any urls from when they didn't have a username
 		db.execute("UPDATE Urls SET username=? WHERE username=?", (username, request.remote_addr)) #can't hurt
@@ -100,7 +125,7 @@ def login():
 	db.execute("SELECT hash FROM User WHERE username=?", (username,))
 	hashed=db.fetchone()
 	if hashed is None:
-		return index("Incorrect username. Want to create an account?")
+		return index('Incorrect username. Want to <a href="http://people.ischool.berkeley.edu/~'+user+'/server/create_account">create an account?</a>')
 	hashed = hashed[0]
 	if bcrypt.hashpw(password, hashed) != hashed:
 		return index("Incorrect password.")
@@ -256,7 +281,7 @@ def shorts():
 					flag = True
 		else:
 			# if it is, and the user specified the short, return error
-			return index("That short URL was already taken. Try again.")
+			return index(topMessage = "That short URL was already taken. Try again.")
 	# if we're good, put the long, short, 0, {username or IP} into the DB
 	db.execute("INSERT INTO Urls(url, short, username, timesVisited, currentTime) VALUES(?,?,?,?,datetime('now','localtime'))",(longURL,shortURL,username,0))
 	conn.commit()
@@ -276,7 +301,7 @@ def short(shortURL):
 	longURL = db.fetchone()
 	#if it's not, return 404
 	if longURL is None:
-		return render_template('page_not_found.html'), 404
+		return flask.render_template('page_not_found.html', USER=user), 404
 	# if it is, return it and increase the counter
 	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short=?", (shortURL,))
 	longURL = longURL[0]

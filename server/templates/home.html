@@ -15,8 +15,8 @@
 		<div id="notHeader">
 			<div id="createLogin" >
 				{% if USERNAME %}
-					<p> Welcome, {{USERNAME}}!
-						<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/myAccount"> My account </a> 
+					<p> Welcome, {{USERNAME}}!</br>
+						<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/myAccount"> My account </a> </br>
 						<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/logout">Logout</a>
 					</p>
 				{% else %}
@@ -27,10 +27,13 @@
 						<input type="submit" value="Log in"/>
 					</form>
 				{% endif %}
+				{% if lmessage %}
+					<p class="message">{{lmessage|safe}}</p>
+				{% endif %}
 			</div>
 
 			{% if statusMessage %}
-				<p>{{statusMessage}}</p>
+				<p class="message">{{statusMessage}}</p>
 			{% endif %}
 
 			<div class="links">
@@ -50,7 +53,7 @@
 
 				{% if shortURL %}
 					Here's your new short URL:
-						<div id="new_url">
+						<div id="newURL">
 							{{ shortURL }}
 						</div>
 				{% endif %}
