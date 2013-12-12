@@ -79,14 +79,12 @@ function validPasswordEmail()
 		//password.focus();//
 		//problem = true;
 		return false;
-		}	
-	}	
+		}		
 
 	if (email.value == "" || email.value ==null){
 		alert("empty email");
 		return false;
 	}
-
 
 	//ensure both passwords entered are a match
 //	if (password.value != password2.value){
@@ -97,22 +95,21 @@ function validPasswordEmail()
 //	}
 
 	//make sure it matches length requirements//
-//	if (password.value.length < 8)	{
-//		alert("password must be 8 chars");
+	if (password.value.length < 8)	{
+		alert("password must be 8 chars");
 		//console.log("reached length req check");
 		//password.focus();
 		//problem = true;
 		//passwordError.show;
-//		return false;
-//	}
+		return false;
+	}
 	//ensure both passwords entered are a match
-//	if (password.value != password2.value){
+	if (password.value != password2.value){
 	//	console.log("reached password match validation");
-//		alert("passwords don't match!");
+		alert("passwords don't match!");
 		//problem = true;
-//		return false;
-//	}
-///	
+		return false;
+	}	
 
 	//ensure pw is not same as email//
 	if (password.value == email.value){
@@ -122,7 +119,7 @@ function validPasswordEmail()
 		//otherError.show;
 		return false;
 	}
-
+}
 /*
 	//ensure pw is not same as username//
 	if (password.value == username.value) {
