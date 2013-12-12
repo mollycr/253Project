@@ -37,18 +37,18 @@
 			{% endif %}
 
 			<div class="links">
-				<form id="shortenLink" method="post" action="shorts">
+				<form id="shortenLink" onsubmit="return allLetterNumber()" method="post" action="shorts">
 					<div>
-						<label for="long">Enter the link to be shortened in the long field:</label><br>
+						<label for="long">Enter a link to shorten:</label><br><div id="noLongLink" class="err">*Please enter a link</div>
 						<input type="text" id="long" name="long" style="width:50%"> 	
 					</div>
 					<br>
 					<div>
 						<input type="radio" id="autoCreate" name="URL" value="autoCreate" checked="checked" onClick="clearCustom()">automatically create URL <br>
 						<input type="radio" id="specify" name="URL" value="specify">shorten URL to
-						<input type="text" id="short" name="short" style="width:20%" placeholder="Letters and numbers" onclick="selectCustom()">
+						<input type="text" id="short" name="short" style="width:20%" placeholder="Letters and numbers" onclick="selectCustom()"><br><div id="noShortLink" class="err">*Please enter a short link</div><div id="shortLinkError" class="err">*Please enter numbers and letters only</div>
 					</div>
-					<input type="submit" onClick="return allLetter()" value="Shorten!">
+					<input type="submit" value="Shorten!">
 				</form>
 
 				{% if shortURL %}
