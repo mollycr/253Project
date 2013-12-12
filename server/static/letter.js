@@ -120,17 +120,19 @@ function validPasswordEmail()
 //		otherError.show;
 		return false;
 	}
-}
-/*
+
 	//Some code taken from http://www.the-art-of-web.com/javascript/validate-password///
 	//ensure pw includes lowercase character//
 	re = /[a-z]/;
 	if (!re.test(password.value)) {
-		console.log("reached a-z check");
-		password.focus();
-		problem = True;
-		passwordError.show;
-	}
+		alert("need a lowercase");
+		//console.log("reached a-z check");
+		//password.focus();
+		//problem = true;
+		//passwordError.show;
+		return false;	}
+}
+/*
 	//ensure pw includes digit//
 	re = /[0-9]/;
 	if (!re.test(password.value)) {
