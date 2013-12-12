@@ -153,17 +153,19 @@ function validPasswordEmail()
 		//passwordError.show;
 		return false;
 	} 
-}	
-/*	
+	
+	
 	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	if (reEmail.test(email.value) != True ) {
-		console.log("reached email validation");
-		email.focus();
-		problem = True;
-		emailError.show;
-		
+		alert("bad email, sucker!");
+		//console.log("reached email validation");
+		//email.focus();
+		//problem = true;
+		//emailError.show;
+		return false;
 	}
-
+}
+/*
 	if (problem == True) {
 		return false;
 	}
