@@ -86,14 +86,6 @@ function validPasswordEmail()
 		return false;
 	}
 
-	//ensure both passwords entered are a match
-//	if (password.value != password2.value){
-	//	console.log("reached password match validation");
-//		alert("passwords don't match!");
-		//problem = true;
-//		return false;
-//	}
-
 	//make sure it matches length requirements//
 	if (password.value.length < 8)	{
 		alert("password must be 8 chars");
@@ -119,14 +111,17 @@ function validPasswordEmail()
 		//otherError.show;
 		return false;
 	}
-}
-/*
+
 	//ensure pw is not same as username//
 	if (password.value == username.value) {
-		console.log("reached username-password check");
-		problem = True;
-		otherError.show;
+		alert("pw can't be username!");
+	//	console.log("reached username-password check");
+	//	problem = true;
+//		otherError.show;
+		return false;
 	}
+}
+/*
 	//Some code taken from http://www.the-art-of-web.com/javascript/validate-password///
 	//ensure pw includes lowercase character//
 	re = /[a-z]/;
