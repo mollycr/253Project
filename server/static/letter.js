@@ -78,13 +78,13 @@ function validPasswordEmail()
 		alert("empty password");
 		//password.focus();//
 		problem = true;
-		}		
-
+	}		
+	alert("we can still alert");
 	if (email.value == "" || email.value ==null){
 		alert("empty email");
-		problem = true;
-	
+		problem = true;	
 	}
+
 	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	if (reEmail.test(email.value) != true ) {
 		alert("bad email, sucker!");
@@ -92,7 +92,6 @@ function validPasswordEmail()
 		//email.focus();
 		problem = true;
 		//emailError.show;
-
 	}
 
 	//make sure it matches length requirements//
@@ -102,8 +101,8 @@ function validPasswordEmail()
 		//password.focus();
 		problem = true;
 		//passwordError.show;
-	
 	}
+
 	//ensure both passwords entered are a match
 	if (password.value != password2.value){
 	//	console.log("reached password match validation");
@@ -166,7 +165,7 @@ function validPasswordEmail()
 		return false;
 	}
 	else {
-	return true;
+		return true;
 	}	
 
 	//if all conditions are met, this is a valid pw//
