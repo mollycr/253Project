@@ -75,55 +75,59 @@ function validPasswordEmail()
 	//ensure password field filled in
 	if (password.value == "" || password.value==null){
 		console.log("reached password can't be empty check");
-		alert("empty password");
+		//alert("empty password");
 		//password.focus();//
-		problem = true;
+		//problem = true;
+		$("#passwordError").show();
+		return false;
 	}		
-	alert("we can still alert");
 	if (email.value == "" || email.value ==null){
-		alert("empty email");
-		problem = true;	
+		//alert("empty email");
+		//problem = true;	
+		$("#emailError").show();
+		return false;
 	}
 
 	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-	if (reEmail.test(email.value) != true ) {
-		alert("bad email, sucker!");
+	if (reEmail.test(email.value) != true 	
+		//alert("bad email, sucker!");
 		//console.log("reached email validation");
 		//email.focus();
 		problem = true;
-		//emailError.show;
+		$("#emailError").show();
 	}
 
 	//make sure it matches length requirements//
 	if (password.value.length < 8)	{
-		alert("password must be 8 chars");
+		//alert("password must be 8 chars");
 		//console.log("reached length req check");
 		//password.focus();
 		problem = true;
-		//passwordError.show;
+		$("#passwordError").show();
 	}
 
 	//ensure both passwords entered are a match
 	if (password.value != password2.value){
 	//	console.log("reached password match validation");
-		alert("passwords don't match!");
+		//alert("passwords don't match!");
 		problem = true;
+		$("#confirmError").show();
 	}	
 
 	//ensure pw is not same as email//
 	if (password.value == email.value){
-		alert("pw can't be email")
-		console.log ("reached email-password check");
+		//alert("pw can't be email")
+		//console.log ("reached email-password check");
 		problem = true;
-		//otherError.show;
+		$("#pwEmailError").show();
 	}
 
 	//ensure pw is not same as username//
 	if (password.value == username.value) {
-		alert("pw can't be username!");
+	//	alert("pw can't be username!");
 	//	console.log("reached username-password check");
 		problem = true;
-//		otherError.show;
+		$("#pwUsernameError").show();
 	
 	}
 
@@ -160,14 +164,14 @@ function validPasswordEmail()
 		
 	} 
 	
-
+/*
 	if (problem == true) {
 		return false;
 	}
 	else {
 		return true;
 	}	
-
+*/
 	//if all conditions are met, this is a valid pw//
 
 	//javascript to display hidden values on create_account

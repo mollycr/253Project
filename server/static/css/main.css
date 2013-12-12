@@ -66,3 +66,28 @@ img{
 	left: 0;
 	top: 0;	
 }
+/*Create_account css*/
+#usernameError, #emailError, #passwordError, #pwUsernameError, #pwEmailError, #confirmError{
+display:none;
+}
+
+#textboxLabel{
+        border: 1px dashed black;
+        font-size: 16px;
+        float:left;
+        text-align:right;
+	line-height:160%;
+        margin-right:10px;
+}
+#textBox{
+        text-align: left;
+        float:left;
+        border: 1px dashed black;
+}
+#outerDiv{
+        position:relative;
+	left: 500px;
+	width:600px;
+	height:200px;
+        border: 1px dashed red;
+}
