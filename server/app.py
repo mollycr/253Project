@@ -126,9 +126,9 @@ def myAccount():
 						<th data-sort="string">Long url</th>
 						<th data-sort="string">Short url</th>
 						<th data-sort="int">Number of visits</th>
-						<th>Tags</th>
 						<th data-sort="string">Created</th>
 						<th>Delete?</th>
+						<th>Tags</th>
 						<th>Add tags</th>
 					</tr>
 					</thead>
@@ -140,9 +140,9 @@ def myAccount():
 						<td> %(long)s </td>
 						<td> %(short)s </td>
 						<td> %(visits)d </td>
-						<td> %(tags)s </td>
 						<td> %(timestamp)s </td>
 						<td> <input type="checkbox" name="delete" value="%(short)s"/> </td>
+						<td> %(tags)s </td>
 						<td>
 							<div name="nestedform">
 								<input type="text" name="%(short)s" placeholder="tag1 tag2"/>
@@ -151,6 +151,7 @@ def myAccount():
 						</td>
 					</tr>
 					'''
+	tagTemplate = '<span class="tag">%(tag)s</span> '
 
 	#get all the user's links from the database:
 	conn=sqlite3.connect('cmap.db')
@@ -176,7 +177,7 @@ def myAccount():
 		db2.execute("SELECT tag FROM Tags WHERE short=?", (shortURL,))
 		tagsList = db2.fetchall()
 		for tag in tagsList:
-			 tags += tag[0] + " "
+			 tags += tagTemplate % {"tag" : tag[0]}
 		#add all the information into the template
 		row = rowTemplate % {"long" : longURL, "short" : shortURL, "visits" : visits, "timestamp" : timestamp, "tags" : tags, "x" : x}
 		shorts += (shortURL + " ")

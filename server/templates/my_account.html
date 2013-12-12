@@ -3,17 +3,26 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link rel="stylesheet" type="text/css" href="static/css/main.css">
+		<link rel="stylesheet" type="text/css" href="static/css/tags.css">
+		<link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script src="static/stupidtable.min.js"></script>
         <title>My Account</title>
     </head>
 	<body>
-		<h1>My Account Details</h1>
-		<a href="index">Shorten Links</a>
-		<br><br>
-		<div id="links">
-			{{LinkTable|safe}}
-        </div>
+		<h1>
+			brevitas
+		</h1>
+		<img src="static/header.jpg" width="100%" height="140"/>
+
+		<div id="notHeader">
+			<h2>My Account Details</h2>
+			<a href="index">Shorten Links</a>
+			<br><br>
+			<div id="links">
+				{{LinkTable|safe}}
+			</div>
+		</div>
 		<script>
 			$("#linksTable").stupidtable();
 		</script>
