@@ -1,10 +1,12 @@
 //checks radio button when text clicked
-$("#short").click(function(){
-        $("#specify").attr('checked', 'checked');
+$("#short").focus(function(){
+	$("#specify").prop('checked', true);
 });
+
 $("#autoCreate").click(function(){
 	//clears textbox input if somethig was entered
 	$("#short").val("");
+	$("#specify").prop('checked', false);
 });
 
 function allLetterNumber()
