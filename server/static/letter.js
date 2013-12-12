@@ -1,10 +1,21 @@
 //checks radio button when text clicked
 $("#short").click(function(){
         $("#specify").attr('checked', 'checked');
+//enables input into shortURL textbox when shorten URL radio is selected
+$("#specify").click(function(){
+	$("#specify").attr("checked",true);
+	$("#autoCreate").attr("checked",false);
+//        $("#short").removeAttr("disabled");
 });
 $("#autoCreate").click(function(){
 	//clears textbox input if somethig was entered
 	$("#short").val("");
+	$("#specify").attr("checked",false);
+	$("#autoCreate").attr("checked",true);
+});
+$("#short").click(function(){
+	$("#specify").attr("checked",true);
+	$("#autoCreate").attr("checked",false);
 });
 
 function allLetterNumber()

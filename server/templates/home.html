@@ -34,6 +34,25 @@
 
 			{% if statusMessage %}
 				<p class="message">{{statusMessage}}</p>
+		<div class="links">
+			<form method="POST" action="shorts" name="thisForm">
+				<div>
+					<label for="long">Enter the link to be shortened in the long field:</label><br>
+					<input type="text" id="long" name="long" style="width:50%"> 	
+				</div>
+				<br>
+				<div>
+					<input type="radio" id="autoCreate" name="URL" value="autoCreate">automatically create URL <br>
+					<input type="radio" id="specify" name="URL" value="specify">shorten URL to
+					<input type="text" id="short" name="short" style="width:20%" placeholder="Enter text only">
+				</div>
+				<input type="submit" onClick="return allLetter()" value="Shorten!">
+			</form>
+			{% if shortURL %}
+				Here's your new short URL:
+				<div id="new_url">
+					{{ shortURL }}
+				</div>
 			{% endif %}
 
 			<div class="links">
