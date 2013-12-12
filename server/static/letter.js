@@ -77,22 +77,22 @@ function validPasswordEmail()
 		console.log("reached password can't be empty check");
 		alert("empty password");
 		//password.focus();//
-		//problem = true;
-		return false;
+		problem = true;
 		}		
 
 	if (email.value == "" || email.value ==null){
 		alert("empty email");
-		return false;
+		problem = true;
+	
 	}
 	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	if (reEmail.test(email.value) != true ) {
 		alert("bad email, sucker!");
 		//console.log("reached email validation");
 		//email.focus();
-		//problem = true;
+		problem = true;
 		//emailError.show;
-		return false;
+
 	}
 
 	//make sure it matches length requirements//
@@ -100,34 +100,32 @@ function validPasswordEmail()
 		alert("password must be 8 chars");
 		//console.log("reached length req check");
 		//password.focus();
-		//problem = true;
+		problem = true;
 		//passwordError.show;
-		return false;
+	
 	}
 	//ensure both passwords entered are a match
 	if (password.value != password2.value){
 	//	console.log("reached password match validation");
 		alert("passwords don't match!");
-		//problem = true;
-		return false;
+		problem = true;
 	}	
 
 	//ensure pw is not same as email//
 	if (password.value == email.value){
 		alert("pw can't be email")
 		console.log ("reached email-password check");
-		//problem = true;
+		problem = true;
 		//otherError.show;
-		return false;
 	}
 
 	//ensure pw is not same as username//
 	if (password.value == username.value) {
 		alert("pw can't be username!");
 	//	console.log("reached username-password check");
-	//	problem = true;
+		problem = true;
 //		otherError.show;
-		return false;
+	
 	}
 
 	//Some code taken from http://www.the-art-of-web.com/javascript/validate-password///
@@ -137,9 +135,9 @@ function validPasswordEmail()
 		alert("need a lowercase");
 		//console.log("reached a-z check");
 		//password.focus();
-		//problem = true;
+		problem = true;
 		//passwordError.show;
-		return false;	}
+		}
 
 	//ensure pw includes digit//
 	re = /[0-9]/;
@@ -147,9 +145,9 @@ function validPasswordEmail()
 		alert("need a digit");
 	//console.log("reached digit validation");
 	//	password.focus();
-	//	problem = true
+		problem = true
 //		passwordError.show;
-		return false;	
+		
 	}
 
 	//ensure pw includes uppercase character//
@@ -158,20 +156,21 @@ function validPasswordEmail()
 		alert("need an uppercase");
 		console.log("reached A-Z check");
 		//password.focus();
-		//problem = true;
+		problem = true;
 		//passwordError.show;
-		return false;
+		
 	} 
 	
-}
-/*
-	if (problem == True) {
+
+	if (problem == true) {
 		return false;
 	}
+	else {
+	return true;
+	}	
 
 	//if all conditions are met, this is a valid pw//
 
 	//javascript to display hidden values on create_account
-	
-	return false;
-} */
+}
+
