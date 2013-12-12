@@ -1,58 +1,79 @@
-body {
-	font-size: 12pt;
-	font-family: verdana, arial, helvetica, sans-serif;
-	color: white;
-	background-size: 100%;
-	background-attachment: fixed;
-	text-align: center;
-	color-stop (0%,rgba(255,255,255,0.7)));
-	background-color:#CCCC99;
+
+dy {
+        font-size: 12pt;
+        font-family: verdana, arial, helvetica, sans-serif;
+        color: white;
+        background-size: 100%;
+        background-attachment: fixed;
+        text-align: center;
+        color-stop (0%,rgba(255,255,255,0.7)));
+        background-color:#CCCC99;
 }
 
 h1{
-	position: fixed;
-	text-align: center;
-	vertical-align: center;
-	top: 0;
-	left: 50px;
-	z-index: 100;
-	font-family: 'Poiret One', cursive;
-	color: #990033;
-	font-size: 50pt;
-	height: 100px;
-	width: 100px;
+        position: fixed;
+        text-align: center;
+        vertical-align: center;
+        top: 0;
+        left: 50px;
+        z-index: 100;
+        font-family: 'Poiret One', cursive;
+        color: #990033;
+        font-size: 50pt;
+        height: 100px;
+        width: 100px;
 }
 
 p{
-	color:#e42535;
+        color:#e42535;
 }
-
 table {
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
 }
 
 #notHeader{
-	overflow: auto;
-	margin: 0 auto;
-	padding: 200px 0 0 0;
+        overflow: auto;
+        margin: 0 auto;
+        padding: 200px 0 0 0;
 }
 
 .credits{
-	color: #555;
+        color: #555;
 }
 
 #createLogin {
-	color: white;
-	width: 250px;
-	position: fixed;
-	top: 10px;
-	right: 80px;
+        color: white;
+        width: 250px;
+        position: fixed;
+        top: 10px;
+        right: 80px;
 }
 
 img{
-	position: fixed;
-	left: 0;
-	top: 0;	
+        position: fixed;
+        left: 0;
+        top: 0;
+}
+/*Create_account css*/
+#usernameError, #emailError, #passwordError, #pwUsernameError, #pwEmailError, #confirmError{
+display:none;
+}
+
+#textboxLabel{
+        border: 1px dashed black;
+        font-size: 20px;
+        float:left;
+        text-align:left;
+        margin-right:10px;
+}
+#textBox{
+        text-align: left;
+        left:600px;
+        border: 1px dashed black;
+}
+#labelTextBox{
+        text-align: center;
+        border: 1px dashed red;
 }
