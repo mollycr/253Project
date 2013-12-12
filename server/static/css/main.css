@@ -56,9 +56,10 @@ table {
 	right: 80px;
 }
 
-#err {
+.err {
 	color: #990033;
 	font-size: 10pt;
+	display: none;
 }
 
 img{

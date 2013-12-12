@@ -7,27 +7,28 @@
 		<meta name="keywords" content="account">
 		<link rel="stylesheet" type="text/css" href="static/css/main.css">
 		<link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+		<script src="static/create.js">	</script>
 		<title> Create an account </title>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
 	</head>
 	<body>
-
 		<a href="http://people.ischool.berkeley.edu/~{{USER}}/server/index" style="text-decoration: none;">
 			<h1> brevitas</h1>
 		</a>
-	<img src="static/header.jpg" width="100%" height="140"/>
-
+		<img src="static/header.jpg" width="100%" height="140"/>
 		<div id="notHeader">
 			<h2>Create a free account</h2>
 			<p>to start saving, sharing, and discovering links</p>
 			<div>
-			<form name="create" method="post" action="create_account" onsubmit="return validPasswordEmail()">
-				<input type="text" name="username" placeholder="Username" size="30"/><div id="usernameField" class="err">*Please enter a username. </div> </br>
-				<input type="text" name="email" placeholder="Email address" size="30"/><div id="emailField" class="err">*Please enter a valid email. </div></br>
-				<input type="password" name="password" placeholder="Password" size="30"/><div id="passwordField" class="err">*Password must be 8 characters long and contain at least one of the following: an uppercase letter, a lowercase letter, and a digit 0-9. </div></br>
-				<input type="password" name="password2" placeholder="Password again" size="30"/><div id="password2Field" class="err">*Password entries must match </div></br>
-				<div id="otherErrors">You cannot use your username or email as your password.</div>
+			<form name="create" method="post" action="create_account" onsubmit="return validPasswordEmail();">
+				<input type="text" id="username" name="username" placeholder="Username" size="30"/>
+				<div id="usernameField" class="err">*Please enter a username. </div> </br>
+				<input type="text" id="email" name="email" placeholder="Email address" size="30"/>
+				<div id="emailField" class="err">*Please enter a valid email. </div></br>
+				<input type="password" id="password" name="password" placeholder="Password" size="30"/>
+				<div id="passwordField" class="err">*Password must be 8 characters long and contain at least one of the following: an uppercase letter, a lowercase letter, and a digit 0-9. </div></br>
+				<input type="password" id="password2"name="password2" placeholder="Password again" size="30"/><div id="password2Field" class="err">*Password entries must match </div></br>
+				<div id="otherErrors" class="err">You cannot use your username or email as your password.</div>
 				<input type="submit" value="Create account!"/>
 					{% if statusMessage %}
 					<p>{{statusMessage}}</p>
@@ -35,47 +36,5 @@
 			</form>
 			</div> 	
 		</div>
-		<script src="static/letter.js">	</script>
-</body>	
-
-	<!--- <script>
-		function validPassword() {
-				var password = document.forms['create']['password'];
-				var confirmpassword = document.forms['create']['password2'];
-				var email = document.forms['create']['email'];
-				var username = document.forms['create']['username'];
-				if (password.value == "" || password.value==null){
-					alert ("Enter the password");
-					password.focus();
-					return false;
-				}
-				if ((password.value.length < 8){
-					alert ("Password should be at least 8 characters & contain at least 1 number.");
-					password.focus();
-					return false;
-			///still need to add inclusion of number and uppercase///
-				}
-				if (password.value == email.value ){
-					alert ("Your password cannot be the same as email!");
-					return false;
-				}
-					
-				if(password.value == username.value){
-					alert ("Your password cannot be the same as your username!");
-					return false;
-			
-				}
-				if (confirmpassword.value == " "){
-					alert ("Enter the your password again to ensure you've typed it correctly.");
-					return false;
-				}
-				if (confirmpassword.value != password.value){
-					alert ("Password confirmation does not match.");
-					return false;
-				}
-				return true;
-			}
-		</script>
-	-- >
-
+	</body>
 </html>
