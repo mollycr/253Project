@@ -125,7 +125,7 @@ def login():
 	db.execute("SELECT hash FROM User WHERE username=?", (username,))
 	hashed=db.fetchone()
 	if hashed is None:
-		return index("Incorrect username. Want to create an account?")
+		return index('Incorrect username. Want to <a href="http://people.ischool.berkeley.edu/~'+user+'/server/create_account">create an account?</a>')
 	hashed = hashed[0]
 	if bcrypt.hashpw(password, hashed) != hashed:
 		return index("Incorrect password.")
