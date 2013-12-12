@@ -85,6 +85,15 @@ function validPasswordEmail()
 		alert("empty email");
 		return false;
 	}
+	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	if (reEmail.test(email.value) != true ) {
+		alert("bad email, sucker!");
+		//console.log("reached email validation");
+		//email.focus();
+		//problem = true;
+		//emailError.show;
+		return false;
+	}
 
 	//make sure it matches length requirements//
 	if (password.value.length < 8)	{
@@ -154,16 +163,6 @@ function validPasswordEmail()
 		return false;
 	} 
 	
-	
-	var reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-	if (reEmail.test(email.value) != True ) {
-		alert("bad email, sucker!");
-		//console.log("reached email validation");
-		//email.focus();
-		//problem = true;
-		//emailError.show;
-		return false;
-	}
 }
 /*
 	if (problem == True) {
