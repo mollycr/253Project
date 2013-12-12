@@ -53,12 +53,12 @@ def index(message='default', url='default'):
 #renders create account page before and after create account form is posted
 def createAccountConfirm(message='default'):
 	if message!='default':
-		return flask.render_template('create_account.html',statusMessage=message)
+		return flask.render_template('create_account.html',USER=user, statusMessage=message)
 	else:
 		if 'username' in session:
-			return flask.render_template('create_account.html',statusMessage='Logged in as %s' % escape(session['username']))
+			return flask.render_template('create_account.html',USER=user, statusMessage='Logged in as %s' % escape(session['username']))
 		else:
-			return flask.render_template('create_account.html')
+			return flask.render_template('create_account.html', USER=user)
 
 @app.route('/create_account', methods=['POST'])
 def create_account():
@@ -73,11 +73,11 @@ def create_account():
 	#checks if username already in database, reloads page for user to try again
 	em=db.execute("SELECT email FROM User WHERE username=?", (username,)).fetchone()
 	if em is not None:
-		return flask.render_template('create_account.html', statusMessage="Username is already taken")
+		return flask.render_template('create_account.html', USER=user, statusMessage="Username is already taken")
 	#checks if email already in database, reloads page for user to try again
 	un=db.execute("SELECT username FROM User WHERE email=?", (email,)).fetchone()
 	if un is not None:
-		return flask.render_template('create_account.html',statusMessage="There's already an account for this email")
+		return flask.render_template('create_account.html',USER=user,statusMessage="There's already an account for this email")
 	else:
 		#check to see if we have any urls from when they didn't have a username
 		db.execute("UPDATE Urls SET username=? WHERE username=?", (username, request.remote_addr)) #can't hurt
@@ -276,7 +276,7 @@ def short(shortURL):
 	longURL = db.fetchone()
 	#if it's not, return 404
 	if longURL is None:
-		return render_template('page_not_found.html'), 404
+		return flask.render_template('page_not_found.html', USER=user), 404
 	# if it is, return it and increase the counter
 	db.execute("UPDATE Urls SET timesVisited=timesVisited+1 WHERE short=?", (shortURL,))
 	longURL = longURL[0]
