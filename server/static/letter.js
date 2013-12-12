@@ -79,34 +79,31 @@ function validPasswordEmail()
 	//ensure password field filled in
 	if (password.value == "" || password.value==null){
 		console.log("reached password can't be empty check");
-		//alert("empty password");
+		alert("empty password");
 		//password.focus();//
 		//problem = true;
 		return false;
-		}
-	
-
+		}	
 }
 
 	//ensure both passwords entered are a match
-	if(password.value != password2.value)
-	{
-		console.log("reached password match validation");
-		alert("passwords don't match!");
+//	if (password.value != password2.value){
+	//	console.log("reached password match validation");
+//		alert("passwords don't match!");
 		//problem = true;
-		return false;
-		
-	
-	}
-/*
+//		return false;
+//	}
+
 	//make sure it matches length requirements//
 	if (password.value.length < 8)	{
+		alert("password must be 8 chars");
 		console.log("reached length req check");
-		password.focus();
-		problem = True;
-		passwordError.show;
-		
+		//password.focus();
+		//problem = true;
+		//passwordError.show;
+		return false;
 	}
+/*
 	//ensure pw is not same as email//
 	if (password.value == email.value){
 		console.log ("reached email-password check");
