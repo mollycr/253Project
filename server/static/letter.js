@@ -1,29 +1,20 @@
 //checks radio button when text clicked
-$("#short").click(function(){
-        $("#specify").attr('checked', 'checked');
-//enables input into shortURL textbox when shorten URL radio is selected
-$("#specify").click(function(){
-	$("#specify").attr("checked",true);
-	$("#autoCreate").attr("checked",false);
-//        $("#short").removeAttr("disabled");
+$("#short").focus(function(){
+	$("#specify").prop('checked', true);
 });
 $("#autoCreate").click(function(){
 	//clears textbox input if somethig was entered
 	$("#short").val("");
-	$("#specify").attr("checked",false);
-	$("#autoCreate").attr("checked",true);
-});
-$("#short").click(function(){
-	$("#specify").attr("checked",true);
-	$("#autoCreate").attr("checked",false);
+	$("#specify").prop('checked', false);
 });
 
 function allLetterNumber()
 {
+	var error = false;
 	$(".err").hide();
 	if ($("#long").val()==""||$("#long").val()==null){
 		//alert("Please specify a URL to shorten");
-		var longError=true;
+		error=true;
 		$("#noLongLink").show();
 	}
 	if($("#specify:checked").val()=="specify"){ 
@@ -42,10 +33,10 @@ function allLetterNumber()
 		//short link has characters other than letters and numbers
 		{
 			$("#shortLinkError").show();
-			var shortError=true;
+			error=true;
 		}
 	}
-	if(longError||shortError){
+	if(error){
 		return false;
 	}
 	else{
