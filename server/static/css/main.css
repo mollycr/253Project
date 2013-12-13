@@ -1,3 +1,4 @@
+
 body {
 	font-size: 12pt;
 	font-family: verdana, arial, helvetica, sans-serif;
@@ -31,6 +32,7 @@ table {
 
 #notHeader{
 	overflow: auto;
+	position:relative;
 	margin: 0 auto;
 	padding: 200px 0 0 0;
 }
@@ -66,4 +68,24 @@ img{
 	position: fixed;
 	left: 0;
 	top: 0;	
+}
+#passwordReq{
+        text-align:left;
+        font-size:8pt;
+}
+#textboxLabels{
+	text-align:right;
+	vertical-align:top;
+	position:relative;
+	width:300px;
+	display:inline-block;
+	line-height:22px;
+}
+#textbox{
+	overflow:auto;
+	display:inline-block;
+	text-align:left;
+	position: relative;
+	width:500px;
+	height:200px;
 }

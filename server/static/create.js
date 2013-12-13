@@ -20,6 +20,10 @@ function validPasswordEmail()
 	usernameError.hide();
 
 	//ensure password field filled in
+	if (username==null||username==""){
+                usernameError.show();
+                problem=true;
+        }
 	if (password == "" || password==null){
 		passwordError.show();
 		problem = true;
